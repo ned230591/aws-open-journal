@@ -1,0 +1,41 @@
+.medium-label {
+  min-width: 55px;
+  text-align: center;
+  color: #b8b4b4;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+.medium-label:hover {
+  color: #00e676;
+}
+.medium-label:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.small-label {
+  color: #bab5b5;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+
+.large-label {
+  color: #919090;
+  font-size: 0.98rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+}
+
+@media (max-width: 768px) {
+
+  .large-label {
+    font-size: 0.60rem;
+    letter-spacing: 0.08em;
+  }
+
+}
+
+

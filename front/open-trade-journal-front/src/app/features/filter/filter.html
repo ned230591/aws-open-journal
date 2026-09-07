@@ -1,0 +1,146 @@
+<div class="bg-filter p-4 mb-3 m-4">
+
+  <!-- TITLE -->
+  <div class="filter-title d-flex gap-2 align-items-center">
+    <i class="bi bi-filter text-success"></i>
+    <span>Filter</span>
+  </div>
+
+  <div class="filter-controls">
+
+    <!-- PERIOD -->
+    <div class="filter-item">
+
+      <label
+        for="dateFilter"
+        class="filter-text"
+      >
+        Period
+      </label>
+
+      <select
+        id="dateFilter"
+        class="form-select"
+        [value]="selectedPeriod"
+        (change)="onPeriodChange($event)"
+      >
+        <option value="today">Today</option>
+        <option value="yesterday">Yesterday</option>
+        <option value="week">This Week</option>
+        <option value="lastWeek">Last Week</option>
+        <option value="month">This Month</option>
+        <option value="custom">Custom Range</option>
+      </select>
+
+    </div>
+
+
+    @if (selectedPeriod === 'custom') {
+
+      <!-- FROM -->
+      <div class="filter-item">
+
+        <label class="filter-text">
+          From
+        </label>
+
+        <mat-form-field
+          appearance="outline"
+          class="cmd-date-field"
+        >
+
+          <input
+            matInput
+            [matDatepicker]="startPicker"
+            [min]="minTradeDate"
+            [max]="todayDate"
+            [value]="startDate"
+            readonly
+            placeholder="mm/dd/yyyy"
+            (dateChange)="onStartDateChange($event)"
+          />
+
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="startPicker"
+          ></mat-datepicker-toggle>
+
+          <mat-datepicker
+            #startPicker
+          ></mat-datepicker>
+
+        </mat-form-field>
+
+      </div>
+
+
+      <!-- TO -->
+      <div class="filter-item">
+
+        <label class="filter-text">
+          To
+        </label>
+
+        <mat-form-field
+          appearance="outline"
+          class="cmd-date-field"
+        >
+
+          <input
+            matInput
+            [matDatepicker]="endPicker"
+            [min]="minTradeDate"
+            [max]="todayDate"
+            [value]="endDate"
+            readonly
+            placeholder="mm/dd/yyyy"
+            (dateChange)="onEndDateChange($event)"
+          />
+
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="endPicker"
+          ></mat-datepicker-toggle>
+
+          <mat-datepicker
+            #endPicker
+          ></mat-datepicker>
+
+        </mat-form-field>
+
+        @if (endDate && endDate > todayDate) {
+          <div class="filter-error">
+            &gt; ERROR: End date cannot be in the future.
+          </div>
+        }
+
+      </div>
+
+    }
+
+
+    <!-- APPLY -->
+    <div class="apply-container">
+
+      <button
+        type="button"
+        class="apply-btn"
+        [disabled]="isApplyDisabled"
+        (click)="applyFilter()"
+      >
+        Apply filter
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- DATE ERROR -->
+  @if (startDate && endDate && startDate > endDate) {
+    <div class="filter-error mt-2">
+      &gt; ERROR: Start date cannot be after the end date.
+    </div>
+  }
+
+</div>

@@ -1,0 +1,247 @@
+.stock-ranking {min-height: 420px;
+
+  border: 2px solid   rgba(32, 34, 32, 0.6);
+}
+
+/** TABL */
+.table thead th {
+  padding: 11px 10px;
+  background: rgba(0, 255, 102, 0.025) !important;
+  border-top: 1px solid  #626563  !important;
+  border-bottom: 1px solid  #626563  !important;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.table tbody td {
+  padding: 12px 10px;
+  background: transparent;
+  border-bottom: 1px solid #102d19;
+  color: #d7e5da;
+  font-size: 13px;
+}
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.table tbody tr {
+  transition: background 0.12s ease, box-shadow 0.12s ease;
+}
+.table tbody tr:hover {
+  background: rgba(218, 244, 228, 0.04);
+  box-shadow: inset 2px 0 0 #ddf4e7;
+}
+
+
+/** RANKING NUMBER*/
+.ranking-number {
+  width: 55px;
+  color: #416c4d !important;
+  font-size: 11px !important;
+  font-weight: bold;
+  white-space: nowrap;
+}
+.rank-prefix {
+  color: #4e805c;
+}
+.stock-symbol {
+  color: #aaa5a5 !important;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.terminal-prompt {
+  margin-right: 6px;
+  color: #00ff66;
+  font-weight: bold;
+  text-shadow: 0 0 5px rgba(0, 255, 102, 0.3);
+}
+.trade-count {
+  color: #7fa88a !important;
+  font-size: 12px !important;
+}
+.stock-pnl {
+  font-size: 13px !important;
+  font-weight: bold;
+  white-space: nowrap;
+}
+.stock-pnl.profit {
+  color: #00ff66 !important;
+  text-shadow: 0 0 6px rgba(0, 255, 102, 0.35);
+}
+.stock-pnl.loss {
+  color: #ff3333 !important;
+  text-shadow: 0 0 6px rgba(255, 51, 51, 0.35);
+}
+
+.empty-state {
+  padding: 24px 10px !important;
+  color: #52755b !important;
+  font-size: 12px !important;
+  text-align: center;
+  letter-spacing: 0.2px;
+}
+
+
+
+
+.table-responsive {
+  scrollbar-width: thin;
+  scrollbar-color: #176b31 transparent;
+}
+
+.table-responsive::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: transparent;
+}
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #176b31;
+  border-radius: 0;
+}
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #00a844;
+}
+table {
+  th {
+    color: #8299ae !important;
+  }
+}
+
+
+
+
+@media (max-width: 767.98px) {
+  .stock-ranking-inner {
+    padding: 16px;
+  }
+
+  .table thead th {
+    padding: 10px 8px;
+    font-size: 9px;
+  }
+
+  .table tbody td {
+    padding: 11px 8px;
+    font-size: 12px;
+  }
+
+  .stock-symbol {
+    font-size: 12px;
+  }
+
+  .stock-pnl {
+    font-size: 12px !important;
+  }
+
+}
+
+
+
+@media (max-width: 575.98px) {
+
+  .stock-ranking-inner {
+    padding: 14px;
+  }
+
+  .ranking-number {
+    width: 45px;
+  }
+
+  .terminal-prompt {
+    margin-right: 4px;
+  }
+
+  .stock-count {
+    font-size: 9px;
+  }
+
+}
+
+/* * PAGINATION*/
+.stock-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #102d19;
+
+}
+.pagination-btn {
+  min-width: 82px;
+  padding: 6px 10px;
+  background: rgba(0, 255, 102, 0.025);
+  border: 1px solid #416c4d;
+  color: #a9c6b0;
+
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  transition:
+    color 0.12s ease,
+    background 0.12s ease,
+    border-color 0.12s ease,
+    box-shadow 0.12s ease;
+}
+.pagination-btn:hover:not(:disabled) {
+  background: rgba(0, 255, 102, 0.07);
+  border-color: #00ff66;
+  color: #00ff66;
+  box-shadow: 0 0 6px rgba(0, 255, 102, 0.15);
+}
+.pagination-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+/*** PAGE INFO*/
+.pagination-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #52755b;
+  font-size: 13px;
+  font-weight: bold;
+}
+.page-current {
+  color: #00ff66;
+  text-shadow: 0 0 5px rgba(0, 255, 102, 0.25);
+}
+.page-separator {
+  color: #a9bdae;
+}
+
+.pagination-status {
+  margin-top: 6px;
+  color: #89958c;
+
+  font-size: 13px;
+  letter-spacing: 0.3px;
+  text-align: center;
+  font-weight: bold;
+}
+
+
+/** MOBILE ========================================*/
+@media (max-width: 575.98px) {
+  .stock-pagination {
+    margin-top: 10px;
+    padding-top: 8px;
+  }
+  .pagination-btn {
+    min-width: 70px;
+    padding: 6px 7px;
+    font-size: 9px;
+  }
+  .pagination-info {
+    font-size: 10px;
+  }
+  .pagination-status {
+    font-size: 8px;
+  }
+}

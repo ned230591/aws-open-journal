@@ -1,0 +1,76 @@
+<div class="stock-ranking p-4">
+
+  <div class="row p-0">
+    <!-- TERMINAL HEADER -->
+    <div class="row  m-3 col-12">
+        <div class="terminal-title">Stock ranking</div>
+        <div class="terminal-subtitle">Best performing stocks</div>
+    </div>
+
+    <!-- STOCK COUNT -->
+    <div class= "col-12 d-flex align-items-center justify-content-end mb-2">
+      <span class="border d-flex p-1 align-items-center small text-bg-secondary fw-semibold">
+        [ {{ stockPnl.length }} STOCKS ]
+      </span>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-responsive">
+      <table class="table table-sm align-middle mb-0">
+        <thead>
+        <tr>
+          <th>#</th>
+          <th>Symbol</th>
+          <th class="text-center">Trades</th>
+          <th class="text-end">P&amp;L
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+          @for (
+            stock of paginatedStocks;track stock.symbol;let i = $index) {
+            <tr>
+              <!-- RANK -->
+              <td class="ranking-number"><span class="rank-prefix">[{{ (currentPage - 1) * pageSize + i + 1 }}]</span></td>
+              <!-- SYMBOL -->
+              <td class="stock-symbol text-uppercase"><span class="terminal-prompt">&gt;</span>{{ stock.symbol }}</td>
+              <!-- TRADES -->
+              <td class="text-center trade-count">{{ stock.trades }}</td>
+              <!-- P&L -->
+              <td class="text-end stock-pnl" [class.profit]="stock.pnl >= 0" [class.loss]="stock.pnl < 0">
+                {{ stock.pnl | currency:'USD':'symbol':'1.0-0' }}
+              </td>
+            </tr>
+          }
+
+        <!-- EMPTY STATE -->
+          @if (stockPnl.length === 0) {
+            <tr>
+              <td colspan="4" class="empty-state">&gt; NO_TRADING_DATA</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+
+      <!-- PAGINATION -->
+      @if (stockPnl.length > pageSize) {
+        <div class="stock-pagination">
+          <!-- PREVIOUS -->
+          <button type="button" class="pagination-btn" [disabled]="currentPage === 1" (click)="previousPage()">&lt; PREV</button>
+          <!-- PAGE -->
+          <div class="pagination-info">
+            <span class="page-current">[{{ currentPage }}]</span>
+            <span class="page-separator">/</span>
+            <span>{{ totalPages }}</span>
+          </div>
+          <!-- NEXT -->
+          <button type="button" class="pagination-btn" [disabled]="currentPage === totalPages" (click)="nextPage()">NEXT &gt;</button>
+        </div>
+        <!-- PAGINATION STATUS -->
+        <div class="pagination-status">&gt; SHOWING {{ pageStart }}-{{ pageEnd }} OF {{ stockPnl.length }}</div>
+      }
+
+    </div>
+  </div>
+</div>

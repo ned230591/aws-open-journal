@@ -1,0 +1,157 @@
+@use '../../../styles/backgrounds' as *;
+
+.div-card {
+  max-height: 80vh;
+  overflow-y: scroll;
+  background:
+    linear-gradient(
+        120deg,
+        rgba(94, 104, 98, 0.05),
+        transparent 30%
+    ),
+    linear-gradient(
+        300deg,
+        rgba(255, 255, 255, 0.035),
+        transparent 35%
+    ),
+    linear-gradient(
+        145deg,
+        rgba(176, 179, 177, 0.13),
+        #101610 55%,
+        #090d0a
+    ) !important;
+
+  border: 1px solid rgba(144, 233, 244, 0.38);
+
+  box-shadow:
+    0 25px 70px rgba(228, 219, 219, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.27),
+    0 0 35px rgba(225, 239, 231, 0.44);
+
+  border-radius: 4px !important;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(144, 233, 244, 0.36) #211d1e;
+
+}
+/* Chrome / Edge / Safari */
+.div-card::-webkit-scrollbar {
+  width: 10px;
+}
+
+.div-card::-webkit-scrollbar-track {
+  background: #211d1e;
+}
+
+.div-card::-webkit-scrollbar-thumb {
+  background: #3a3a3a;
+  border-radius: 6px;
+  border: 2px solid #211d1e;
+}
+.header {
+  border-bottom:  1px solid rgba(137, 142, 143, 0.49);
+}
+.div-card::-webkit-scrollbar-thumb:hover {
+  background: #4a4a4a;
+}
+.dialog-close {
+  background-color: rgba(74, 7, 7, 0.37);
+  border:1px solid rgba(244, 217, 217, 0.39);
+}
+
+.dialog-close:hover {
+  background-color: rgba(129, 6, 6, 0.84);
+  border:1px solid rgba(246, 238, 238, 0.45);
+  color:white !important;
+  transform: scale(1.07);
+}
+
+.screenshot-input{
+  max-width: 250px;
+  background-color: rgba(128, 128, 128, 0.24) !important;
+  border:1px solid rgba(255, 255, 255, 0.27);
+  color: #c5bfbf;
+}
+
+.screenshot-input:hover{
+  background-color: rgba(214, 210, 210, 0.5) !important;
+  border:1px solid rgba(255, 255, 255, 0.7);
+  color: #f1ecec;
+}
+
+.cancel-button{
+  max-width: 250px;
+  background-color: rgba(22, 32, 22, 0.35);
+  color: #a6a1a1;
+  border:1px solid rgba(170, 166, 166, 0.27);
+  height: 30px;
+}
+.cancel-button:hover{
+  background-color: rgba(39, 53, 39, 0.29);
+  color: #d5d0d0;
+  border:1px solid rgba(204, 194, 194, 0.78);
+  cursor: pointer;
+}
+.save-evaluation-button {
+  max-width: 250px;
+  background-color: rgba(126, 158, 158, 0.22);
+  color: #a9c6cd;
+  border:1px solid rgba(180, 217, 221, 0.26);
+  height: 30px;
+}
+.save-evaluation-button:hover {
+  background-color: rgba(120, 241, 241, 0.16);
+  color: #68d1ea;
+  border:1px solid rgb(107, 210, 221);
+  cursor: pointer;
+
+}
+.add-point-button{
+background-color: rgba(232, 229, 229, 0.16);
+  border:1px solid grey ;
+}
+
+.add-point-button:hover{
+  background-color: rgba(232, 229, 229, 0.25);
+  border:1px solid #9f9f9f;
+  transform: scale(1.07);
+}
+
+.light-grey-bg:hover {
+  transform: scale(1);
+}
+
+
+.evaluation-section input {
+  background-color: rgba(211, 208, 208, 0.05);
+  border:1px solid grey ;
+  color: #dad6d6;
+  padding:4px 10px;
+}
+.delete-icon:hover {
+  color:red;
+  transform: scale(1.07);
+}
+.screenshot-preview img , .saved-screenshot img{
+  height: 100px;
+  width: 100px;
+  max-height: 100px;
+ max-width: 100px;
+  border-bottom:1px solid rgba(128, 128, 128, 0.41);
+
+ }
+.screenshot-preview  , .saved-screenshot {
+  border:1px solid rgba(181, 193, 195, 0.29);
+  background-color: black;
+  height: 150px;
+  width: 100px;
+  border-radius: 19px;
+  box-shadow:
+    0 8px 25px rgba(228, 237, 231, 0.07),
+    0 0 20px rgba(214, 218, 216, 0.22),
+    inset 0 1px 0 rgba(229, 232, 230, 0.34);
+
+}
+
+.screenshot-preview:hover   , .saved-screenshot:hover  {
+  transform: scale(1.07);
+}

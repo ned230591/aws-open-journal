@@ -1,0 +1,130 @@
+@use '../../../styles/backgrounds' as *;
+.header-icon {
+  width:50px ;
+height: 50px;
+  background: rgba(59, 71, 73, 0.3);
+  border: 1px solid rgba(144, 233, 244, 0.9);
+}
+/** faq**/
+ .faq-item {
+  border: 1px solid rgba(255, 255, 255, 0.065);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.018),
+      transparent 45%
+    ),
+    #101512;
+  &[open] {
+    mat-icon {
+      color: #16bcd1 !important;
+    }
+    border-color: rgba(66, 211, 255, 0.20);
+    background:
+      linear-gradient(
+        135deg,
+        rgba(66, 211, 255, 0.025),
+        transparent 45%
+      ),
+      #111715;
+    summary mat-icon {
+      transform: rotate(180deg);
+    }
+  }
+  summary {
+    min-height: 66px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+    &::-webkit-details-marker {
+      display: none;
+    }
+    &:hover {
+      background: rgba(66, 211, 255, 0.018);
+    }
+    mat-icon {
+      margin-left: auto;
+      color: #53615c;
+      font-size: 23px;
+      transition: transform 0.2s ease;
+    }
+  }
+}
+ .faq-index {
+  color: #71bcd6;
+  font-size: 14px;
+}
+ .faq-question {
+  color: #c8d0cb;
+  font-size: 15px;
+}
+ .faq-content {
+  border-top: 1px solid rgba(255, 255, 255, 0.055);
+  color: #919b94;
+  font-size: 14px;
+  line-height: 1.8;
+  strong {
+    color: #c4ccc7;
+  }
+}
+
+.architecture-code {
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-left: 2px solid rgba(66, 211, 255, 0.32);
+  background: #070b09;
+  color: #7f8a83;
+  font-size: 12px;
+  line-height: 1.85;
+}
+
+ .faq-tip {
+  border-left: 2px solid #42d3ff;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(66, 211, 255, 0.035),
+      transparent 60%
+    ),
+    #090e0c;
+  color: #7f8982;
+  font-size: 12px;
+  line-height: 1.7;
+}
+@media (max-width: 768px) {
+ .faq-item {
+    summary {
+      min-height: 62px;
+      padding: 0 15px;
+      gap: 12px;
+    }
+  }
+
+  .faq-index {
+    font-size: 11px;
+  }
+
+ .faq-question {
+    font-size: 14px;
+  }
+
+ .faq-content {
+    font-size: 13px;
+    line-height: 1.75;
+  }
+
+
+  .architecture-code {
+    font-size: 11px;
+    line-height: 1.75;
+  }
+
+ .terminal-flow {
+    gap: 8px;
+    padding: 13px;
+    font-size: 11px;
+  }
+}

@@ -1,0 +1,35 @@
+.nav-btn {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(168, 169, 174, 0.78);
+  border: 1px solid rgba(218, 221, 217, 0.12);
+  border-radius: 7px;
+  background: rgba(34, 30, 30, 0.4);
+  transition:
+    background-color 0.12s ease,
+    color 0.12s ease,
+    transform 0.12s ease,
+    border-color 0.12s ease;
+}
+.nav-btn:hover:not(:disabled) {
+  background: rgba(207, 207, 207, 0.23);
+  transform: scale(1.1);
+  color: #29e329;
+  font-weight: bold;
+  border-color: rgba(75, 243, 20, 0.49);
+}
+.nav-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .nav-btn {
+    width: 28px;
+    height: 28px;
+  }
+}

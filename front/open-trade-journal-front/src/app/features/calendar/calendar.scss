@@ -1,0 +1,360 @@
+@use '../../../styles/buttons' as *;
+@use '../../../styles/typography' as *;
+@use '../../../styles/backgrounds' as *;
+.calendar-card {
+  overflow-x: auto;
+  overflow-y: hidden;
+  min-width: 500px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color:
+    rgba(0, 230, 118, 0.35)
+    rgba(255, 255, 255, 0.04);
+}
+.calendar-card::-webkit-scrollbar {
+  height: 6px;
+}
+.calendar-card::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.035);
+  border-radius: 10px;
+}
+.calendar-card::-webkit-scrollbar-thumb {
+  background: rgba(0, 230, 118, 0.30);
+  border-radius: 10px;
+}
+.calendar-card::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 230, 118, 0.55);
+}
+.calendar-summary-pnl {
+  position: absolute;
+  top: 0;
+}
+.month-picker {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 155px;
+  min-width: 155px;
+}
+.month-picker-input {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+  border: 0;
+  outline: 0;
+}
+.calendar-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+.week-header {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+.week-day {
+  padding:4px ;
+  min-width: 0;
+  color: #acafae;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  white-space: nowrap;
+}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.calendar-day {
+  position: relative;
+  padding: 4px;
+  overflow: hidden;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+.calendar-day:hover {
+  transform: translateY(-1px);
+}
+.day-number {
+  color: #aebbb6;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+.day-pnl {
+  display: block;
+  margin-top: 20px;
+  color: #dbe5e1;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+.calendar-day.profit-light-bg .day-pnl {
+  color: #00e676;
+}
+.calendar-day.loss-light-bg .day-pnl {
+  color: #ff5252;
+}
+.calendar-day.neutral {
+  border-color: rgba(255, 255, 255, 0.26);
+}
+.calendar-day.neutral .day-number {
+  color: rgba(125, 139, 133, 0.82);
+}
+.no-trades {
+  margin-top: 21px;
+  color: #3d4945;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+.calendar-day.other-month {
+  opacity: 0.42;
+}
+.calendar-day.other-month:hover {
+  opacity: 0.55;
+}
+.calendar-day.today {
+  border-color: rgba(234, 231, 222, 0.6);
+}
+.calendar-day.today::after {
+  content: '';
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ebecd2;
+}
+.calendar-day.best-day {
+  border:2px solid  rgba(0, 230, 118, 0.75);
+  background: rgba(174, 244, 174, 0.27);
+}
+.calendar-day.best-day::before {
+  content: 'BEST';
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  padding: 2px 5px;
+  border: 1px solid rgba(0, 230, 118, 0.28);
+  border-radius: 3px;
+  color: #00e676;
+  background: rgba(0, 230, 118, 0.08);
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.06em;
+}
+.calendar-day.worst-day {
+  border-color: rgba(255, 82, 82, 0.72);
+  background: rgba(236, 102, 102, 0.29);
+}
+.calendar-day.worst-day::before {
+  content: 'WORST';
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  padding: 2px 5px;
+  border: 1px solid rgba(255, 82, 82, 0.28);
+  border-radius: 3px;
+  color: #ff5252;
+  background: rgba(255, 82, 82, 0.08);
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.06em;
+
+}
+.calendar-day:nth-child(7n),
+.calendar-day:nth-child(7n - 1) {
+  background-color: rgba(174, 167, 167, 0.11);
+}
+.calendar-day.profit-light-bg:nth-child(7n),
+.calendar-day.profit-light-bg:nth-child(7n - 1) {
+  background:
+    linear-gradient(
+        145deg,
+        rgba(0, 230, 118, 0.12),
+        rgba(0, 230, 118, 0.04)
+    );
+}
+.calendar-day.loss:nth-child(7n),
+.calendar-day.loss:nth-child(7n - 1) {
+  background:
+    linear-gradient(
+        145deg,
+        rgba(255, 82, 82, 0.11),
+        rgba(255, 82, 82, 0.035)
+    );
+}
+.calendar-day.best-day:nth-child(7n),
+.calendar-day.best-day:nth-child(7n - 1) {
+  background:
+    linear-gradient(
+        145deg,
+        rgba(0, 230, 118, 0.20),
+        rgba(0, 230, 118, 0.055)
+    );
+}
+.calendar-day.worst-day:nth-child(7n),
+.calendar-day.worst-day:nth-child(7n - 1) {
+  background:
+    linear-gradient(
+        145deg,
+        rgba(255, 82, 82, 0.18),
+        rgba(255, 82, 82, 0.045)
+    );
+}
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+}
+/**calendar scroll **/
+.calendar-card {
+  min-width: 0;
+  overflow: visible;
+}
+.calendar-scroll {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color:
+    rgba(0, 230, 118, 0.35)
+    rgba(255, 255, 255, 0.04);
+}
+.calendar-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+.calendar-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.035);
+  border-radius: 10px;
+}
+.calendar-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 230, 118, 0.30);
+  border-radius: 10px;
+}
+.calendar-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 230, 118, 0.55);
+}
+.week-header,
+.calendar-grid {
+  min-width: 650px;
+}
+.week-header {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+  box-sizing: border-box;
+}
+.calendar-day {
+  min-width: 0;
+}
+
+@media (max-width: 768px) {
+  .month-picker,
+  .month-label {
+    width: 135px;
+    min-width: 135px;
+  }
+  .day-pnl {
+    margin-top: 14px;
+    font-size: 0.62rem;
+  }
+  .week-day {
+    font-size: 0.55rem;
+  }
+  .calendar-day.best-day::before,
+  .calendar-day.worst-day::before {
+    top: 5px;
+    right: 5px;
+    padding: 2px 4px;
+    font-size: 0.50rem;
+  }
+}
+@media (max-width: 480px) {
+  .calendar-summary-pnl{
+    position: relative;
+  }
+  .month-picker {
+    width: 120px;
+    min-width: 120px;
+  }
+
+
+  .calendar-day.best-day::before,
+  .calendar-day.worst-day::before {
+    top: 4px;
+    right: 4px;
+    padding: 2px 3px;
+    font-size: 0.34rem;
+  }
+  .calendar-day.today.best-day::after,
+  .calendar-day.today.worst-day::after {
+    display: none;
+  }
+}
+@media (max-width: 360px) {
+  .calendar-card {
+    padding: 8px;
+  }
+  .calendar-day {
+    min-height: 62px;
+    padding: 7px;
+  }
+  .day-number {
+    font-size: 0.54rem;
+  }
+  .day-pnl {
+    margin-top: 10px;
+    font-size: 0.68rem;
+  }
+  .no-trades {
+    margin-top: 10px;
+    font-size: 0.55rem;
+  }
+  .week-day {
+    font-size: 0.48rem;
+    letter-spacing: 0.04em;
+  }
+
+  .monthly-stat-label {
+    font-size: 0.42rem;
+  }
+  .monthly-stat-value {
+    font-size: 0.60rem;
+  }
+
+  .calendar-day.best-day::before,
+  .calendar-day.worst-day::before {
+    top: 3px;
+    right: 3px;
+    padding: 1px 3px;
+    font-size: 0.30rem;
+  }
+}
+

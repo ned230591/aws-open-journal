@@ -1,0 +1,36 @@
+<div class="error-container row d-flex align-items-center justify-content-center p-0 m-0 h-100">
+  <div class="row col-12 d-flex align-items-center justify-content-center">
+    <!-- Logo -->
+    <div class="col-12 d-flex align-items-center justify-content-center">
+      <img src="logo.png" alt="Logo" />
+    </div>
+    <!-- Error content -->
+    <div class="row col-12 justify-content-center error-content">
+
+      <h1 class="text-center col-12">
+        ERROR: Something went wrong
+      </h1>
+
+      <p class="col-12 text-secondary text-center">
+        We couldn't connect to the authentication service.
+      </p>
+      <p class="col-12 text-secondary text-center">
+        Please try again in a few moments.
+      </p>
+    </div>
+
+    <!-- Retry -->
+    <div class="row d-flex align-items-center justify-content-center my-4">
+      <button
+        type="button"
+        (click)="retry()"
+        class="col-md-3"
+      >
+        [ TRY AGAIN ]
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

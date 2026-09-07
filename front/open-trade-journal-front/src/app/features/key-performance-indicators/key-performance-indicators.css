@@ -1,0 +1,139 @@
+
+.performance-section {
+
+ min-height: 420px;
+
+}
+
+
+/******kpi ****/
+.kpi-card {
+  font-size: 19px;
+  font-weight: 600;
+  position: relative;
+  height: 100px;
+  line-height: 30px;
+  border: 1px solid rgba(188, 145, 77, 0.31);
+  border-left: 3px solid rgba(237, 237, 212, 0.65);
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+  padding:30px !important;
+}
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  opacity: 0.8;
+}
+.kpi-card:hover {
+  background: rgba(0, 255, 102, 0.025);
+  transform: translateX(2px);
+}
+.kpi-label {
+  margin-bottom: 7px;
+  color: #dbffe3;
+  text-transform: uppercase;
+}
+.kpi-value {
+  color: #ffffff;
+}
+.kpi-value.profit {
+  color: #00ff66;
+  text-shadow: 0 0 7px rgba(0, 255, 102, 0.35);
+}
+.kpi-value.loss {
+  color: #ff3333;
+  text-shadow: 0 0 7px rgba(255, 51, 51, 0.35);
+}
+.kpi-value.neutral {
+  color: #ffffff;
+}
+.kpi-indicator {
+  position: absolute;
+  right: 10px;
+  margin-left: auto;
+  width: 30px;
+  height: 24px;
+  font-size: 12px;
+  background: rgba(236, 217, 46, 0.11);
+  border: 1px solid rgba(239, 221, 154, 0.51);
+  box-shadow: 0 0 6px rgba(0, 255, 102, 0.08);
+}
+
+
+/************highlight-card **********/
+.highlight-card {
+  padding:30px !important;
+  line-height: 30px;
+  font-size: 20px;
+  font-weight: 700;
+  position: relative;
+  height: 100px;
+  background: rgba(0, 0, 0, 0.25);
+  border:1px solid #c4dacc42;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+.highlight-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+}
+.highlight-card.positive {
+  border-left: 3px solid #00ff66;
+}
+.highlight-card.positive::before {
+  background: #00ff66;
+  box-shadow: 0 0 8px rgba(0, 255, 102, 0.5);
+}
+.highlight-card.negative {
+  border-left: 3px solid #ff3333;
+}
+.highlight-card.negative::before {
+  background: #ff3333;
+  box-shadow: 0 0 8px rgba(255, 51, 51, 0.5);
+}
+.highlight-card:hover {
+  transform: translateX(2px);
+  background: rgba(0, 255, 102, 0.025);
+  box-shadow: 0 0 10px rgba(0, 255, 102, 0.04);
+}
+.highlight-label {
+  margin-bottom: 5px;
+  color: #5ca86f;
+}
+.highlight-value.profit {
+  color: #00ff66;
+  text-shadow: 0 0 7px rgba(0, 255, 102, 0.35);
+}
+.highlight-value.loss {
+  color: #ff3333;
+  text-shadow: 0 0 7px rgba(255, 51, 51, 0.35);
+}
+.highlight-marker {
+  width: 30px;
+  height: 30px;
+  background: rgba(0, 255, 102, 0.04);
+  border: 1px solid #176b31;
+  color: #00ff66;
+}
+.highlight-card.negative .highlight-marker {
+  color: #ff3333;
+  background: rgba(255, 51, 51, 0.04);
+  border-color: #7d2525;
+}
+
+
+

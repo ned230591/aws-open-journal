@@ -1,0 +1,22 @@
+<div class=" chart-container h-100  p-4 m-0   ">
+  <!-- TERMINAL HEADER -->
+    <!-- title -->
+  <div class="terminal-header my-3">
+    <div>
+      <div class="terminal-title">
+         P&amp;L Performance
+      </div>
+      <div class="terminal-subtitle">
+        Cumulative performance
+      </div>
+    </div>
+  </div>
+  <!--sub title -->
+    <span class="f   p-4  m-1  cum-pnl-total" [class.text-success]="cumulativePnl >= 0" [class.text-danger]="cumulativePnl < 0">
+      {{ cumulativePnl >= 0 ? '+' : '' }}${{
+        cumulativePnl | number:'1.2-2'
+      }}
+    </span>
+  <!-- chart  -->
+  <div echarts [options]="chartOptions" class="chart"></div>
+</div>

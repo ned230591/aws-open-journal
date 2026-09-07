@@ -1,0 +1,93 @@
+@use '../../../styles/buttons' as *;
+@use '../../../styles/borders' as *;
+@use '../../../styles/typography' as *;
+@use '../../../styles/backgrounds' as *;
+.trading-activity-container {
+  position: relative;
+  min-width: 0;
+}
+.activity-legend {
+  width: 100%;
+  background-color: rgba(30, 29, 29, 0.98);
+  font-size: 13px;
+  font-weight: bold;
+  max-height: 32px;
+}
+.level {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  border-radius: 0;
+  border: 1px solid #285b36;
+}
+.calendar-wrapper {
+  position: relative;
+}
+.activity-calendar {
+  width: 100%;
+  max-width: 700px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #176b31 #020402;
+}
+/* Chrome / Edge / Safari */
+.activity-calendar::-webkit-scrollbar {
+  height: 9px;
+}
+.activity-calendar::-webkit-scrollbar-track {
+  background: #020402;
+  border-top: 1px solid #123d21;
+  border-radius: 0;
+}
+.activity-calendar::-webkit-scrollbar-thumb {
+  background: #176b31;
+  border: 2px solid #020402;
+  border-radius: 0;
+}
+.activity-calendar::-webkit-scrollbar-thumb:hover {
+  background: #00ff66;
+}
+.days {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  gap: clamp(2px, 0.35vw, 5px);
+}
+.square {
+  flex: 1 1 0;
+  width: 0px;
+  aspect-ratio: 1 / 1;
+  min-width: 0;
+  min-height: 0;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: 0;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    filter 0.12s ease;
+  cursor: pointer;
+}
+.square:hover {
+  transform: scale(1.45);
+  position: relative;
+  z-index: 10;
+  filter: brightness(1.2);
+  box-shadow: 0 0 8px rgba(0, 255, 102, 0.5);
+}
+.large-label::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 7px;
+  vertical-align: middle;
+  background: #00ff66;
+}
+
+
+
+

@@ -1,0 +1,25 @@
+@if (isLoggedIn) {
+  <mat-sidenav-container class="layout">
+    <mat-sidenav #drawer class="sidebar" [mode]="isMobile ? 'over' : 'side'"
+      [opened]="!isMobile">
+      <app-sidebar></app-sidebar>
+    </mat-sidenav>
+    <mat-sidenav-content >
+      @if (isMobile) {
+        <mat-toolbar class="mobile-toolbar mx-0  my-4 p-4 ">
+          <button class="mobile-open-icon my-4  p-4 "
+                  (click)="drawer.open()">
+            <img src="logo-mobile.png " />
+          </button>
+        </mat-toolbar>
+      }
+      <main class="content m-0 p-0">
+        <router-outlet></router-outlet>
+      </main>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+}@else {
+  <main class="content m-0 p-0">
+    <router-outlet></router-outlet>
+  </main>
+}

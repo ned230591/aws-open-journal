@@ -1,0 +1,531 @@
+<div class="trading-terminal p-0">
+
+  <!-- HEADER -->
+  <div class="row mb-3 p-4">
+    <div class="terminal-title">Trade History</div>
+    <div class="terminal-subtitle">
+      All trading activity
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="d-flex  px-4 pb-4 align-items-end  gap-3">
+
+    <!-- SYMBOL FILTER -->
+    <div class="gap-3">
+      <label class="text-success medium-label mx-1 fw-bold my-2">> Symbol</label>
+
+      <div class="d-flex ">
+
+        <input
+          class="filter-input"
+          id="symbolFilter"
+          type="text"
+          placeholder="Filter symbol..."
+          [value]="symbolFilter"
+          (input)="onSymbolFilterChange($any($event.target).value)"
+        />
+
+        @if (symbolFilter) {
+          <button
+            type="button"
+            class="clear-filter"
+            (click)="clearSymbolFilter()"
+            aria-label="Clear symbol filter"
+          >
+            ×
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- RESET -->
+    @if (symbolFilter || sortBy) {
+      <button
+        type="button"
+        class="reset-filter-button"
+        (click)="resetFilters()"
+        [disabled]="loading()"
+      >
+        Reset
+      </button>
+    }
+
+  </div>
+
+
+  <!-- DESKTOP -->
+  <div class="d-flex align-items-center justify-content-center">
+    <div class="w-100 desktop-table">
+
+      <div class="table-responsive">
+        <table class="table p-0 m-0">
+
+          <thead>
+          <tr>
+
+            <!-- DATE -->
+            <th
+              class="sortable"
+              (click)="sortByColumn('orderTime')"
+            >
+              <span>Date</span>
+
+              @if (sortBy === 'orderTime') {
+                <span class="sort-icon">
+      {{ sortDirection === 'asc' ? '↑' : '↓' }}
+    </span>
+              }
+            </th>
+
+            <!-- SYMBOL -->
+            <th
+              class="sortable"
+              (click)="sortByColumn('symbol')"
+            >
+              <span>Symbol</span>
+
+              @if (sortBy === 'symbol') {
+                <span class="sort-icon">
+                    {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                  </span>
+              }
+            </th>
+
+            <!-- SIDE -->
+            <th
+              class="sortable"
+              (click)="sortByColumn('buySell')"
+            >
+              <span>Side</span>
+
+              @if (sortBy === 'buySell') {
+                <span class="sort-icon">
+                    {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                  </span>
+              }
+            </th>
+
+            <!-- TRADE PRICE -->
+            <th
+              class="sortable"
+              (click)="sortByColumn('tradePrice')"
+            >
+              <span>Trade Price</span>
+
+              @if (sortBy === 'tradePrice') {
+                <span class="sort-icon">
+                    {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                  </span>
+              }
+            </th>
+
+            <!-- QUANTITY -->
+            <th
+              class="sortable"
+              (click)="sortByColumn('quantity')"
+            >
+              <span>Quantity</span>
+
+              @if (sortBy === 'quantity') {
+                <span class="sort-icon">
+                    {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                  </span>
+              }
+            </th>
+
+            <!-- P&L -->
+            <th
+              class="sortable"
+              (click)="sortByColumn('fifoPnlRealized')"
+            >
+              <span>P&amp;L</span>
+
+              @if (sortBy === 'fifoPnlRealized') {
+                <span class="sort-icon">
+                    {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                  </span>
+              }
+            </th>
+
+            <!-- EVALUATION -->
+            <th class="evaluation-header">
+              Evaluation
+            </th>
+
+          </tr>
+          </thead>
+
+
+          <tbody>
+
+            @for (trade of trades; track $index) {
+
+                <tr>
+
+                  <td>
+                    {{ formatOrderTime(trade.orderTime) }}
+                  </td>
+
+                  <td class="text-uppercase fw-bolder">
+                    {{ trade.symbol }}
+                  </td>
+
+                  <td>
+                  <span
+                    class="trade-side d-flex align-items-center justify-content-center"
+                    [class.profit-light-bg]="getSideClass(trade.buySell) === 'buy'"
+                    [class.loss-light-bg]="getSideClass(trade.buySell) === 'sell'"
+                  >
+                    {{ trade.buySell }}
+                  </span>
+                  </td>
+
+                  <td>
+                    {{ formatPrice(trade.tradePrice) }}
+                  </td>
+
+                  <td>
+                    {{ trade.quantity }}
+                  </td>
+
+                  <td
+                    class="fw-bold"
+                    [class.positive]="trade.fifoPnlRealized > 0"
+                    [class.negative]="trade.fifoPnlRealized < 0"
+                    [class.text-grey]="trade.fifoPnlRealized === 0"
+                  >
+                    {{ trade.fifoPnlRealized | currency:'USD':'symbol':'1.2-2' }}
+                  </td>
+                  <td class="evaluation-cell">
+                    @if(trade.fifoPnlRealized && trade.fifoPnlRealized !=0 ) {
+                      <button
+                        type="button"
+                        class="d-flex align-items-center light-grey-bg  rounded-2   py-1 px-3  comment-button small"
+                        (click)="openTradeEvaluation(trade); $event.stopPropagation()"
+                        matTooltip="Evaluate trade"
+                        aria-label="Evaluate trade"
+                      >
+                        <mat-icon class="m-1 text-info">
+                          rate_review
+                        </mat-icon>
+
+                        <span>
+          Comment
+        </span>
+                      </button>
+                    }
+
+
+                  </td>
+                </tr>
+              }
+
+
+
+
+
+            @if (!loading() && trades.length === 0) {
+              <tr>
+                <td colspan="6" class="empty-state">
+                  @if (symbolFilter) {
+                    No trades found for "{{ symbolFilter }}".
+                  } @else {
+                    No trades found for this period.
+                  }
+                </td>
+              </tr>
+            }
+          <!-- EVALUATION BUTTON -->
+
+          </tbody>
+
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- MOBILE -->
+  <div class="mobile-table">
+
+    <table class="table">
+
+      <thead>
+      <tr>
+
+        <!-- DATE -->
+        <th
+          class="sortable"
+          (click)="sortByColumn('orderTime')"
+        >
+          Date
+
+          @if (sortBy === 'orderTime') {
+            <span class="sort-icon">
+                {{ sortDirection === 'asc' ? '↑' : '↓' }}
+              </span>
+          }
+        </th>
+
+        <!-- SYMBOL -->
+        <th
+          class="sortable"
+          (click)="sortByColumn('symbol')"
+        >
+          Symbol
+
+          @if (sortBy === 'symbol') {
+            <span class="sort-icon">
+                {{ sortDirection === 'asc' ? '↑' : '↓' }}
+              </span>
+          }
+        </th>
+
+        <!-- P&L -->
+        <th
+          class="text-end sortable"
+          (click)="sortByColumn('fifoPnlRealized')"
+        >
+          P&amp;L
+
+          @if (sortBy === 'fifoPnlRealized') {
+            <span class="sort-icon">
+                {{ sortDirection === 'asc' ? '↑' : '↓' }}
+              </span>
+          }
+        </th>
+
+      </tr>
+      </thead>
+
+
+      <tbody>
+
+        @for (trade of trades; track $index) {
+
+            <!-- MAIN ROW -->
+            <tr
+              class="trade-row"
+              (click)="toggleTrade($index)"
+            >
+
+            <td>
+              {{ formatOrderTime(trade.orderTime) }}
+            </td>
+
+              <td class="text-uppercase fw-bolder">
+                {{ trade.symbol }}
+              </td>
+
+              <td
+                class="text-end fw-bold"
+                [class.text-success]="trade.fifoPnlRealized > 0"
+                [class.text-danger]="trade.fifoPnlRealized < 0"
+                [class.text-secondary]="trade.fifoPnlRealized === 0"
+              >
+
+                {{ trade.fifoPnlRealized | currency:'USD':'symbol':'1.2-2' }}
+
+                <span class="expand-icon">
+                {{ expandedTrade() === $index ? '⌃' : '⌄' }}
+              </span>
+
+              </td>
+
+            </tr>
+
+
+            <!-- EXPANDED DETAILS -->
+            @if (expandedTrade() === $index) {
+
+              <tr class="trade-details">
+
+                <td colspan="3">
+
+                  <div class="details-grid">
+
+                    <div class="detail-item">
+
+                      <small>Side</small>
+
+                      <span
+                        class="trade-side d-flex align-items-center justify-content-center"
+                        [class.profit-light-bg]="getSideClass(trade.buySell) === 'buy'"
+                        [class.loss-light-bg]="getSideClass(trade.buySell) === 'sell'"
+                      >
+                      {{ trade.buySell }}
+                    </span>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                      <small>Trade Price</small>
+
+                      <strong>
+                        {{ formatPrice(trade.tradePrice) }}
+                      </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                      <small>Quantity</small>
+
+                      <strong>
+                        {{ formatPrice(trade.quantity) }}
+                      </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                      <small>P&amp;L</small>
+
+                      <strong
+                        [class.positive]="trade.fifoPnlRealized > 0"
+                        [class.negative]="trade.fifoPnlRealized < 0"
+                        [class.text-grey]="trade.fifoPnlRealized === 0"
+                      >
+                        {{ trade.fifoPnlRealized | currency:'USD':'symbol':'1.2-2' }}
+                      </strong>
+
+                    </div>
+
+                  </div>
+
+                  <div class="detail-item evaluation-detail">
+                    @if(trade.fifoPnlRealized && trade.fifoPnlRealized !=0 ) {
+
+                      <small>
+                        Evaluation
+                      </small>
+
+                      <button
+                        type="button"
+                        class=" d-flex align-items-center justify-content-center light-grey-bg   rounded-2   py-1 px-3  comment-button small"
+                        (click)="openTradeEvaluation(trade); $event.stopPropagation()"
+                      >
+
+                        <mat-icon class="text-info mx-2">
+                          rate_review
+                        </mat-icon>
+
+                        <span>
+      Evaluate trade
+    </span>
+
+                      </button>
+                    }
+
+
+                  </div>
+
+                </td>
+
+              </tr>
+
+            }
+
+
+
+
+
+        }
+
+
+        @if (!loading() && trades.length === 0) {
+
+          <tr>
+            <td colspan="3" class="empty-state">
+
+              @if (symbolFilter) {
+                No trades found for "{{ symbolFilter }}".
+              } @else {
+                No trades found for this period.
+              }
+
+            </td>
+          </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+
+  <!-- PAGINATION -->
+  @if (totalPages > 0) {
+
+    <div
+      class="pagination-container d-flex align-items-center justify-content-center gap-4 p-4"
+    >
+
+      <!-- PREVIOUS -->
+      <button
+        type="button"
+        class="pagination-button rounded-2"
+        (click)="previousPage()"
+        [disabled]="currentPage === 0 || loading()"
+      >
+        Previous
+      </button>
+
+
+      <!-- PAGE SELECTOR -->
+      <div
+        class="page-selector p-2 gap-2 w-100 d-flex align-items-center justify-content-center"
+      >
+
+        <span class="mx-2">
+          Page
+        </span>
+
+        <input
+          type="number"
+          min="1"
+          [max]="totalPages"
+          [value]="pageInput"
+          (input)="pageInput = $any($event.target).valueAsNumber"
+          (keyup.enter)="goToPage()"
+        />
+
+        <span>
+          of {{ totalPages }}
+        </span>
+
+        <button
+          type="button"
+          class="go-page-button rounded-2 p-2"
+          (click)="goToPage()"
+          [disabled]="loading()"
+        >
+          Go
+        </button>
+
+      </div>
+
+
+      <!-- NEXT -->
+      <button
+        type="button"
+        class="pagination-button rounded-2"
+        (click)="nextPage()"
+        [disabled]="currentPage >= totalPages - 1 || loading()"
+      >
+        Next
+      </button>
+
+    </div>
+
+  }
+
+</div>

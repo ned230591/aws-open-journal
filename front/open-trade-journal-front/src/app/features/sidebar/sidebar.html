@@ -1,0 +1,54 @@
+<mat-nav-list class="sidebar-container m-0 p-0">
+
+  <!-- Logo -->
+  <div class="logo d-flex justify-content-center align-items-center  w-100 p-4">
+    <img src="logo.png" />
+  </div>
+  <!-- Import -->
+  <div class="menu-item m-1" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+    <button
+            class="border-0 w-100 d-flex align-items-center  justify-content-start"
+            [routerLink]="['/import']"><i class="bi bi-cloud-upload menu-icon"></i><span>Import</span>
+    </button>
+  </div>
+  <!-- Dashboard -->
+  <div class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+    <button  [routerLink]="['/dashboard']"
+    class="border-0 w-100 d-flex align-items-center  justify-content-start"
+    ><i class="bi bi-speedometer2 menu-icon"></i><span>Dashboard</span>
+    </button>
+  </div>
+  <div class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+    <button  [routerLink]="['/analysis']"
+             class="border-0 w-100 d-flex align-items-center  justify-content-start"
+    ><i class="bi bi-list-columns-reverse"></i><span>Analysis</span>
+    </button>
+  </div>
+  <div class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+    <button  [routerLink]="['/trace']"
+             class="border-0 w-100 d-flex align-items-center  justify-content-start"
+    ><i class="bi bi-signpost-split"></i><span>Trade Trace</span>
+    </button>
+  </div>
+  <div class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+    <button  [routerLink]="['/help']"
+             class="border-0 w-100 d-flex align-items-center  justify-content-start"
+    ><i class="bi bi-question-diamond"></i><span>Help</span>
+    </button>
+  </div>
+  <div class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+    <button  [routerLink]="['/architecture']"
+             class="border-0 w-100 d-flex align-items-center  justify-content-start"
+    ><mat-icon>lan</mat-icon><span>Architecture</span>
+    </button>
+  </div>
+  <!-- Logout -->
+  <div class="logout-container">
+    <div class="menu-item logout-item">
+      <button (click)="logout()"
+              class="border-0 w-100 d-flex align-items-center  justify-content-start"
+      ><mat-icon class="menu-icon">logout</mat-icon><span>Logout</span>
+      </button>
+    </div>
+  </div>
+</mat-nav-list>

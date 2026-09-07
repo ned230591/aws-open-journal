@@ -1,0 +1,77 @@
+<!-- FILTER -->
+<app-filter></app-filter>
+
+<div class="row dashboard  m-0 p-4">
+  <!-- HEADER -->
+  <div class=" mb-4 ">
+    <div class="d-flex align-items-center gap-3">
+      <div class="header-icon"><i class="bi bi-speedometer2 menu-icon"></i></div>
+      <div>
+        <h1 class="title">Trading dashboard</h1>
+        <p class="subtitle mb-0">Monitor your trading performance and activity</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- DASHBOARD -->
+  @if (hasTrades) {
+
+      <div class="row col-12 col-xl-6 m-0 p-0 mb-4">
+        <app-key-performance-indicators [stats]="stats" class="p-0 div-card" ></app-key-performance-indicators>
+      </div>
+
+      <div class=" row col-12 col-xl-6 m-0 p-0  mb-4">
+        <app-chart [pnlHistory]="stats()?.pnlHistory ?? []" class="p-0  mx-xl-2  div-card "></app-chart>
+      </div>
+
+
+  }
+  <!-- NO TRADES -->
+  @if (!hasTrades && periodLabelFromCookie.length > 0) {
+    <div class="div-card p-4  d-flex align-items-center justify-content-center">
+      <div class="text-center">
+        <div class="empty-dashboard-icon d-flex align-items-center justify-content-center">
+          <i class="bi bi-bar-chart-line"></i>
+        </div>
+        <div class="empty-dashboard-terminal">&gt; SYSTEM STATUS</div>
+        <h2 class="empty-dashboard-title">No trades for the selected period</h2>
+        <p class="empty-dashboard-description">There are no trades recorded for<strong>{{ periodLabelFromCookie }}</strong>. Try selecting a different period or date range to view your trading activity.</p>
+        <div class="empty-dashboard-status">
+          <span class="status-dot"></span>
+          No trading activity found
+        </div>
+        <div class="empty-dashboard-features">
+          <div class="empty-feature"><i class="bi bi-graph-up"></i><span>Cumulative P&amp;L</span></div>
+          <div class="empty-feature"><i class="bi bi-speedometer2"></i><span>Performance KPIs</span></div>
+          <div class="empty-feature"><i class="bi bi-activity"></i><span>Trading Activity</span></div>
+          <div class="empty-feature"><i class="bi bi-clock-history"></i><span>Trade History</span></div>
+        </div>
+      </div>
+    </div>
+  }
+  <!-- NO PERIOD SELECTED -->
+  @if (periodLabelFromCookie.length === 0) {
+    <div class="div-card  d-flex align-items-center justify-content-center p-4">
+      <div class="text-center">
+        <div class="empty-dashboard-icon d-flex align-items-center justify-content-center ">
+          <i class="bi bi-calendar3"></i>
+        </div>
+        <div class="empty-dashboard-terminal">&gt; SYSTEM STATUS</div>
+        <h2 class="empty-dashboard-title">Select a period to get started</h2>
+        <p class="empty-dashboard-description">
+          Please select a period from the filter above
+          to start viewing your trading performance,
+          charts, KPIs and trading activity.
+        </p>
+        <div class="empty-dashboard-status"><span class="status-dot"></span>Waiting for period selection</div>
+        <div class="empty-dashboard-features">
+          <div class="empty-feature"><i class="bi bi-graph-up"></i><span>Cumulative P&amp;L</span></div>
+          <div class="empty-feature"><i class="bi bi-speedometer2"></i><span>Performance KPIs</span></div>
+          <div class="empty-feature"><i class="bi bi-activity"></i><span>Trading Activity</span></div>
+          <div class="empty-feature"><i class="bi bi-clock-history"></i><span>Trade History</span></div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

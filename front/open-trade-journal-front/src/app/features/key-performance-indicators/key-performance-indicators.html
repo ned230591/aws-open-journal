@@ -1,0 +1,91 @@
+<div class="row performance-section p-4  m-0    align-items-center justify-content-center">
+
+  <!-- TERMINAL HEADER -->
+  <div class="terminal-header my-3 p-0">
+    <div>
+      <div class="terminal-title">Performance highlights</div>
+      <div class="terminal-subtitle">Best and worst trades for the selected period</div>
+    </div>
+  </div>
+  <div class="row d-flex my-4 ">
+    <!--KPIs -->
+    <div class="row  col-12 col-lg-6   p-0 m-0
+
+">
+      <div class="row  d-flex  align-items-center  ">
+        <!-- TOTAL P&L -->
+        <div class="col-12    my-2 kpi-card  d-flex  align-items-center px-3">
+          <div class=" d-flex  align-items-center justify-content-center gap-3">
+            <div>
+              <div class="kpi-label small">Total PNL</div>
+              <div class="kpi-value small" [class.profit]="(stats()?.totalPnl ?? 0) >= 0" [class.loss]="(stats()?.totalPnl ?? 0) < 0">
+                {{stats()?.totalPnl ?? 0| currency:'USD':'symbol':'1.2-2' }}
+              </div>
+            </div>
+            <div class="kpi-indicator d-flex align-items-center justify-content-center text-white small">PNL</div>
+          </div>
+        </div>
+        <!-- WIN RATE -->
+        <div class="col-12   my-2 kpi-card  d-flex  align-items-center px-3">
+          <div class=" d-flex  align-items-center justify-content-center gap-3">
+            <div>
+              <div class="kpi-label small">Win rate</div>
+              <div class="kpi-value small  profit">{{ stats()?.winRate ?? 0 | number:'1.0-1' }}%</div>
+            </div>
+            <div class="kpi-indicator d-flex align-items-center justify-content-center text-white small">Win</div>
+          </div>
+        </div>
+        <!-- TOTAL TRADES -->
+        <div class="col-12   my-2 kpi-card  d-flex  align-items-center px-3">
+          <div class=" d-flex  align-items-center justify-content-center gap-3">
+            <div>
+              <div class="kpi-label small ">Total trades</div>
+              <div class="kpi-value small  neutral">{{ stats()?.totalTrades ?? 0 }}</div>
+            </div>
+            <div class="kpi-indicator d-flex align-items-center justify-content-center text-white small">TRD</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- HIGHLIGHTS -->
+    <div class="row col-12 col-lg-6 p-0 m-0" >
+      <div class="row   ">
+        <!-- BEST TRADE -->
+        <div class=" col-12 highlight-card  positive d-flex align-items-center justify-content-between px-3  py-2 my-2 ">
+          <div>
+            <div class="highlight-label">Best trade</div>
+            <div class="highlight-value profit">{{stats()?.bestTrade ?? 0| currency:'USD':'symbol':'1.2-2' }}</div>
+          </div>
+          <div class="highlight-marker d-flex align-items-center justify-content-center">+</div>
+        </div>
+        <!-- WORST TRADE -->
+        <div class="highlight-card negative  d-flex align-items-center justify-content-between px-3  py-2 my-2 ">
+          <div>
+            <div class="highlight-label">Worst trade</div>
+            <div class="highlight-value loss">{{stats()?.worstTrade ?? 0| currency:'USD':'symbol':'1.2-2' }}</div>
+          </div>
+          <div class="highlight-marker d-flex align-items-center justify-content-center">-</div>
+        </div>
+        <!-- BEST DAY -->
+        <div class="highlight-card positive  d-flex align-items-center justify-content-between px-3  py-2 my-2 ">
+          <div >
+            <div class="highlight-label">Best day</div>
+            <div class="highlight-value profit">{{stats()?.bestPnl ?? 0| currency:'USD':'symbol':'1.2-2' }}</div>
+          </div>
+          <div class="highlight-marker  d-flex align-items-center justify-content-center">+</div>
+        </div>
+        <!-- WORST DAY -->
+        <div class="highlight-card negative  d-flex align-items-center justify-content-between  px-3  py-2 my-2 ">
+          <div>
+            <div class="highlight-label">Worst day</div>
+            <div class="highlight-value loss">{{stats()?.worstPnl ?? 0| currency:'USD':'symbol':'1.2-2' }}</div>
+          </div>
+          <div class="highlight-marker  d-flex align-items-center justify-content-center">-</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

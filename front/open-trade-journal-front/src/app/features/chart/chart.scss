@@ -1,0 +1,19 @@
+.chart-container {
+  position: relative;
+
+}
+
+.cum-pnl-total {
+  position: absolute;
+  top: 24px;
+  right: 14px;
+  font-weight: 900;
+  font-size: 20px;
+
+}
+.cum-pnl-total:hover {
+  transform: scale(1.05);
+}
+.text-success {
+  color: #26f826 !important;
+}

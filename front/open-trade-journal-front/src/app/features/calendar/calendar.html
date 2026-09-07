@@ -1,0 +1,294 @@
+<div class="row d-flex align-items-center justify-content-center m-0 p-0">
+  <div>
+    <!-- header -->
+    <div class="p-2">
+      <div class="terminal-title my-4">Trading Calendar</div>
+    </div>
+    <!-- Monthly P&L -->
+    <div class="row mb-2 d-flex align-items-center justify-content-end">
+      <div class="calendar-summary-pnl py-4">
+        <div class="medium-label  d-flex align-items-center justify-content-end">Monthly P&amp;L</div>
+        <div
+          class=" fs-5 d-flex align-items-center justify-content-end"
+          [class.positive]="monthPnl() > 0"
+          [class.negative]="monthPnl() < 0"
+        >
+          @if (monthPnl() > 0) {
+            +
+          }
+          {{ monthPnl() | currency }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--card summary for small screen only-->
+  <div class="row col-12  m-0 d-sm-flex my-4 pt-4  d-xl-none p-2">
+    <div
+      class="row  col-12 col-sm-4 light-grey-bg   p-2  my-2 gap-3 d-flex align-items-center justify-content-center m-0 p-0">
+      <!-- Best Trade -->
+      <div class="col-12  best-trade">
+        <div class="small-label text-center">Best Trade</div>
+        <div class=" positive text-center">
+          @if (bestTrade() > 0) {
+            +
+          }{{ bestTrade() | currency }}
+        </div>
+      </div>
+      <!-- Worst Trade -->
+      <div class="col-12">
+        <div class="small-label text-center">Worst Trade</div>
+        <div class="negative text-center">{{ worstTrade() | currency }}</div>
+      </div>
+    </div>
+    <div
+      class=" row col-12 col-sm-4  light-grey-bg  p-2  my-2 gap-3  d-flex align-items-center justify-content-center m-0 p-0 ">
+      <!-- Best Day -->
+      <div class=" col-12  best-day-stat">
+        <div class="small-label text-center">Best Day</div>
+        <div class="small-label  positive text-center">
+          @if (bestDay(); as day) {
+            <span>+{{ day.pnl | currency }}</span>
+          } @else {
+            <span>—</span>
+          }
+        </div>
+      </div>
+      <!-- Worst Day -->
+      <div class="col-12">
+        <div class="small-label  text-center">Worst Day</div>
+        <div class=" negative text-center">
+          @if (worstDay(); as day) {
+            <span>
+              {{ day.pnl | currency }}
+            </span>
+          } @else {
+            <span>—</span>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="row col-12 col-sm-4  d-flex align-items-center justify-content-center   light-grey-bg  p-2  my-2 gap-3 m-0 p-0 ">
+      <!-- Win Rate -->
+      <div class="  ">
+
+        <div class="small-label  text-center">
+          Win Rate
+        </div>
+
+        <div class="small-label text-center">
+          {{ winRate() | number:'1.0-1' }}%
+        </div>
+
+      </div>
+      <!-- Total Win -->
+      <div class="  ">
+
+        <div class="small-label  text-center">
+          Total Win
+        </div>
+
+        <div class=" positive text-center">
+
+          @if (totalWin() > 0) {
+            +
+          }
+
+          {{ totalWin() | currency }}
+
+        </div>
+
+      </div>
+      <!-- Total Loss -->
+      <div class="  ">
+
+        <div class="small-label text-center">
+          Total Loss
+        </div>
+
+        <div class=" negative text-center">
+          {{ totalLoss() | currency }}
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+  <!--calendar --->
+  <div class="col-12 col-xl-10  m-0 p-0  calendar-card ">
+    <!-- calendar btn prev/next --->
+    <div class=" d-flex align-items-center justify-content-center m-4 py-4">
+      <!--prev-->
+      <button type="button" class="nav-btn d-flex align-items-center justify-content-center rounded-3 "
+              (click)="previousMonth()" [disabled]="isLoading()" aria-label="Previous month">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <!--month picker-->
+      <div class="month-picker">
+        <button type="button" class="medium-label  bg-transparent border-0" (click)="calendarPicker.open()"
+                [disabled]="isLoading()" aria-label="Select month">
+          {{ monthLabel() }}
+        </button>
+        <input
+          class="month-picker-input"
+          [matDatepicker]="calendarPicker"
+          [value]="currentMonth()"
+          readonly
+          tabindex="-1"
+          aria-hidden="true"
+        />
+        <mat-datepicker
+          #calendarPicker
+          startView="multi-year"
+          panelClass="cmd-datepicker"
+          (monthSelected)="selectMonth($event, calendarPicker)"
+        >
+        </mat-datepicker>
+      </div>
+      <!-- Next -->
+      <button
+        type="button"
+        class="nav-btn d-flex align-items-center justify-content-center p-0 rounded-3"
+        (click)="nextMonth()"
+        [disabled]="isLoading()"
+        aria-label="Next month"
+      >
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+    <!-- Calendar content -->
+    <div class="calendar-scroll">
+        <!-- Week Header -->
+        <div class="week-header">
+          @for (day of weekDays;track day) {
+            <div class="week-day">{{ day }}</div>
+          }
+        </div>
+        <!-- Calendar Grid -->
+        <div class="calendar-grid">
+          @for (week of weeks();track $index) {
+            @for (day of week;track day.dateKey) {
+              <div class="calendar-day p-3"
+                [class.other-month]="!day.isCurrentMonth"
+                [class.today]="day.isToday"
+                [class.profit-light-bg]="day.pnl !== null && day.pnl > 0"
+                [class.loss-light-bg]="day.pnl !== null &&day.pnl < 0"
+                [class.neutral]="day.pnl === null "
+                [class.best-day]="day.isBestDay"
+                [class.worst-day]=" day.isWorstDay "
+              >
+                <!-- Day Header -->
+                <div class="day-header">
+                  <div class="day-number">
+                    {{ day.dayNumber }}
+                  </div>
+                </div>
+                <!-- Day P&L -->
+                @if (day.pnl !== null) {
+                  <div class="day-pnl">
+                    @if (day.pnl > 0) {
+                      +
+                    }
+                    {{ day.pnl | currency }}
+                  </div>
+                } @else {
+                  <div class="no-trades">
+                    —
+                  </div>
+                }
+              </div>
+            }
+          }
+        </div>
+    </div>
+    <!--  Footer -->
+    <div  class="row col-12 d-flex align-items-center justify-content-between py-2 my-2">
+      <!-- Legend -->
+      <div  class="row col-12 col-xl-6 p-0 m-0 align-content-between small-label gap-4"  >
+        <span class=" d-flex w-auto align-items-center p-0 m-0 mx-4">
+          <span class="legend-dot  profit-bg mx-1"></span>
+          <span class="">Profit</span>
+        </span>
+        <span class=" d-flex w-auto align-items-center">
+          <span class="legend-dot loss-bg mx-1"></span>
+          <span>Loss</span>
+        </span>
+        <span class=" d-flex w-auto align-items-center">
+          <span class="legend-dot no-trade-bg mx-1"></span>
+          <span>No trades</span>
+        </span>
+      </div>
+      <!-- Day Summary -->
+      <div class="row col-12 col-xl-6  d-flex small p-0 m-0 justify-content-xl-end mx-4 mx-xl-0">
+        <div class="w-auto d-flex positive p-0 m-0">{{ profitableDays() }}profitable</div>
+        <div  class="small-label  w-auto p-0 mx-2 fw-bold">/</div>
+        <div class="negative w-auto p-0 m-0">{{ losingDays() }}losing</div>
+      </div>
+    </div>
+  </div>
+  <!--Monthly Statistics for xl screen only-->
+  <div class="row py-4 mt-4  d-flex  align-items-center justify-content-center col-2   m-0 d-none d-xl-block">
+    <div class="mx-2">
+      <div class="text-grey  py-3 text-center w-100">
+        <strong> Monthly Statistics</strong>
+      </div>
+      <!-- Best Trade -->
+      <div class="profit-light-bg p-3 my-2">
+        <div class="small-label  text-center">Best Trade</div>
+        <div class=" positive text-center">
+          @if (bestTrade() > 0) {
+            +
+          }{{ bestTrade() | currency }}
+        </div>
+      </div>
+      <!-- Worst Trade -->
+      <div class="loss-light-bg  p-3  my-2   worst-trade">
+        <div class="small-label  text-center">Worst Trade</div>
+        <div class=" negative text-center">{{ worstTrade() | currency }}</div>
+      </div>
+      <!-- Best Day -->
+      <div class="profit-light-bg p-3 my-2 best-day-stat">
+        <div class="small-label  text-center">Best Day</div>
+        <div class=" positive text-center">
+          @if (bestDay(); as day) {
+            <span>+{{ day.pnl | currency }}</span>
+          } @else {
+            <span>—</span>
+          }
+        </div>
+      </div>
+      <!-- Worst Day -->
+      <div class="loss-light-bg p-3 my-2 worst-day-stat">
+        <div class="small-label  text-center">Worst Day</div>
+        <div class=" negative text-center">
+          @if (worstDay(); as day) {
+            <span>{{ day.pnl | currency }}</span>
+          } @else {
+            <span>—</span>
+          }
+        </div>
+      </div>
+      <!-- Win Rate -->
+      <div class="light-grey-bg  p-3  my-2   win-rate">
+        <div class="small-label text-center">Win Rate</div>
+        <div class="text-grey text-center">{{ winRate() | number:'1.0-1' }}%</div>
+      </div>
+      <!-- Total Win -->
+      <div class="profit-light-bg  p-3  my-2 total-win">
+        <div class="small-label text-center">Total Win</div>
+        <div class=" positive text-center">
+          @if (totalWin() > 0) {
+            +
+          }
+          {{ totalWin() | currency }}
+        </div>
+      </div>
+      <!-- Total Loss -->
+      <div class="loss-light-bg  p-3  my-2 total-loss ">
+        <div class="small-label  text-center">Total Loss</div>
+        <div class=" negative text-center">{{ totalLoss() | currency }}</div>
+      </div>
+    </div>
+  </div>
+</div>

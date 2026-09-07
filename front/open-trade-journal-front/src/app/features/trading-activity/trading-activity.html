@@ -1,0 +1,139 @@
+<div class="row">
+  <div class="row d-flex align-items-center justify-content-center  col-12  col-xl-6">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <!--header -->
+      <div class="terminal-header terminal-title">Trading activity</div>
+      <!--year navigation -->
+      <div class="year-navigation d-flex align-items-center gap-2">
+        <button type="button"
+          class="btn btn-sm nav-btn"
+          [disabled]="loading()"
+          (click)="previousYear()"
+          aria-label="Previous year">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+        <span class="medium-label">
+        {{ selectedYear }}
+      </span>
+
+
+        <button
+          type="button"
+          class="btn btn-sm nav-btn"
+          [disabled]="loading()"
+          (click)="nextYear()"
+          aria-label="Next year">
+
+          <i class="bi bi-chevron-right"></i>
+
+        </button>
+
+      </div>
+    </div>
+    <div class="row m-0  d-flex trading-activity-container p-4 gap-2">
+      <!--summary card for screen < xl -->
+      <div class=" d-xl-none  col-12  d-flex align-items-center justify-content-center">
+        <div class="row  p-3 light-green-transparent-border ">
+          <!--title -->
+          <div class="col-12  m-2"><h4 class="large-label">Annual Trading Summary </h4></div>
+          <!-- summary content -->
+          <div class="col-12  row gap-3 d-flex align-items-center justify-content-center ">
+            <!-- traded days -->
+            <div class=" light-grey-bg  col-5 py-3  rounded-2  text-center ">
+              <div class="small-label">Traded Days</div>
+              <div class=" text-grey fs-6">{{ tradedDays() }}</div>
+            </div>
+            <!-- no traded days -->
+            <div class="light-grey-bg  py-3  rounded-2  col-5  text-center ">
+              <div class="small-label">No Trade Days</div>
+              <div class=" muted fs-6">{{ nonTradedDays() }}</div>
+            </div>
+            <!-- green days -->
+            <div class=" profit-light-bg py-3 rounded-2 col-5 text-center">
+              <div class="small-label">Green Days</div>
+              <div class=" positive fs-6">{{ greenDays() }}</div>
+            </div>
+            <!--red days -->
+            <div class="loss-light-bg   col-5 py-3  rounded-2   text-center">
+              <div class="small-label">Red Days</div>
+              <div class=" negative fs-6">{{ redDays() }}</div>
+            </div>
+            <!-- green day rate -->
+            <div class=" light-grey-bg  col-5  py-3  rounded-2   text-center">
+              <div class="small-label">Green Day Rate</div>
+              <div class=" text-grey fs-6">{{ greenDayRate() | number:'1.0-1' }}%</div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+
+      <!--legend-->
+      <div class="d-flex gap-3 align-items-center small fw-semibold w-100 activity-legend ">
+        <div class="d-flex gap-2 align-items-center small-label">
+          <i class="level no-trade-bg"></i>
+          <span>NO TRADE</span>
+        </div>
+        <div class="d-flex gap-2 align-items-center small-label">
+          <i class="level loss-bg"></i>
+          <span>LOSS</span>
+        </div>
+        <div class="d-flex gap-2 align-items-center small-label">
+          <i class="level profit-bg"></i>
+          <span>PROFIT</span>
+        </div>
+      </div>
+      <div class="col-12 w-100 p-0 m-0 d-flex align-items-center justify-content-center">
+        <!--activity content -->
+        <div class="activity-calendar p-3 m-0 ">
+          @for (month of months;track month.name) {
+            <div class="d-flex align-items-center justify-content-center gap-1">
+              <div class="medium-label">{{ month.name }}</div>
+              <div class="days">
+                @for (day of month.days;track day.date) {
+                  <div class="square"
+                    [class.no-trade-bg]=" day.status === 'no-trade' ||  day.status === 'zero'  "
+                    [class.profit-bg]=" day.status === 'profit' "
+                    [class.loss-bg]=" day.status === 'loss' "
+                    [matTooltip]="day.tooltip">
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--summary card only  for xl  screen  -->
+  <div class="d-none d-xl-flex col-12  col-xl-6  d-flex align-items-center justify-content-center">
+    <div class="row light-green-transparent-border p-4 ">
+      <div class="col-12  mx-2">
+        <h4 class="large-label">Annual Trading Summary </h4>
+      </div>
+      <div class="col-12  row  align-items-center justify-content-center">
+        <div class=" light-grey-bg   py-3  rounded-2  mt-4 col-12 col-xl-5  text-center mx-2">
+          <div class="small-label">Traded Days</div>
+          <div class=" text-grey  fs-5">{{ tradedDays() }}</div>
+        </div>
+        <div class="light-grey-bg   py-3  rounded-2 mt-4 col-12 col-xl-5 text-center mx-2">
+          <div class="small-label">No Trade Days</div>
+          <div class=" muted fs-5">{{ nonTradedDays() }}</div>
+        </div>
+        <div class=" profit-light-bg    py-3  rounded-2   mt-4 col-12 col-xl-5 mx-2  text-center">
+          <div class="small-label">Green Days</div>
+          <div class=" positive  fs-5">{{ greenDays() }}</div>
+        </div>
+        <div class="loss-light-bg   profit-light-bg  py-3  rounded-2  mt-4 col-12 col-xl-5 mx-2  text-center">
+          <div class="small-label">Red Days</div>
+          <div class=" negative fs-5">{{ redDays() }}</div>
+        </div>
+        <div class=" light-grey-bg   py-3  rounded-2  mt-4 col-12 col-xl-5 mx-2  text-center">
+          <div class="small-label">Green Day Rate</div>
+          <div class=" text-grey  fs-5">{{ greenDayRate() | number:'1.0-1' }}%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

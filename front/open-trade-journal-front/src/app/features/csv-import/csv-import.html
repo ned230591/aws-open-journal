@@ -1,0 +1,411 @@
+<div
+  class="row d-flex align-items-center justify-content-center m-0 p-4"
+>
+
+  <div
+    class="row col-12 col-lg-8 d-flex align-items-center justify-content-center m-0"
+  >
+
+    <!-- =========================================
+         HEADER
+    ========================================== -->
+
+    <div class="d-flex align-items-center gap-3 py-4">
+
+      <div class="header-icon import-header-icon">
+
+        <mat-icon>
+          sync_alt
+        </mat-icon>
+
+        <span class="import-pulse"></span>
+
+      </div>
+
+
+      <div>
+
+        <h1 class="title">
+          Import trading history
+        </h1>
+
+        <p class="subtitle mb-0">
+          Import your broker activity and keep your
+          trading journal in sync.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================================
+         IMPORT CARD
+    ========================================== -->
+
+    <div
+      class="div-card import-card col-12 p-4 mt-4"
+    >
+
+      <!-- IMPORT STATUS -->
+
+      <div class="import-status">
+
+        <span class="status-dot"></span>
+
+        <span>
+          Ready to import
+        </span>
+
+      </div>
+
+
+      <!-- CSV DROP ZONE -->
+
+      <div class="csv-drop-zone">
+
+        <div class="csv-file-icon">
+
+          <mat-icon>
+            description
+          </mat-icon>
+
+          <span class="csv-badge">
+            CSV
+          </span>
+
+          <div class="upload-arrow">
+
+            <mat-icon>
+              north
+            </mat-icon>
+
+          </div>
+
+        </div>
+
+
+        <h3 class="import-zone-title">
+          Import your trading history
+        </h3>
+
+
+        <p class="import-zone-subtitle">
+          Select the CSV exported from your
+          supported broker.
+        </p>
+
+
+        <!-- REQUIREMENTS -->
+
+        <div class="import-requirements">
+
+          <span>
+            <i class="bi bi-check-circle-fill"></i>
+            Trading history
+          </span>
+
+          <span>
+            <i class="bi bi-check-circle-fill"></i>
+            CSV format
+          </span>
+
+          <span>
+            <i class="bi bi-check-circle-fill"></i>
+            Supported broker
+          </span>
+
+        </div>
+
+
+        <!-- FILE INPUT -->
+
+        <input
+          #fileInput
+          type="file"
+          accept=".csv"
+          id="csvFile"
+          class="file-input"
+          (change)="onFileSelected($event)"
+          [disabled]="loading || deleting"
+        />
+
+
+        <label
+          for="csvFile"
+          class="choose-file-btn"
+          [class.disabled]="loading || deleting"
+        >
+
+          <mat-icon>
+            folder_open
+          </mat-icon>
+
+          <span>
+            Choose CSV file
+          </span>
+
+        </label>
+
+
+        <span class="file-hint">
+          CSV files only ·
+        </span>
+
+      </div>
+
+
+      <!-- =========================================
+           SELECTED FILE
+      ========================================== -->
+
+      @if (selectedFile) {
+
+        <div class="selected-file">
+
+          <div class="selected-file-icon">
+
+            <mat-icon>
+              description
+            </mat-icon>
+
+          </div>
+
+
+          <div class="selected-file-info">
+
+            <span class="selected-file-label">
+              Selected file
+            </span>
+
+            <span class="selected-file-name">
+              {{ selectedFile.name }}
+            </span>
+
+          </div>
+
+
+          <div class="selected-file-status">
+
+            <i class="bi bi-check-circle-fill"></i>
+
+            Ready
+
+          </div>
+
+        </div>
+
+      }
+
+
+      <!-- =========================================
+           UPLOAD BUTTON
+      ========================================== -->
+
+      @if (selectedFile) {
+
+        <button
+          type="button"
+          mat-raised-button
+          class="upload-btn"
+          [disabled]="!selectedFile || loading || deleting"
+          (click)="upload()"
+        >
+
+          @if (loading) {
+
+            <mat-spinner
+              diameter="18"
+              class="upload-spinner"
+            >
+            </mat-spinner>
+
+            <span>
+              Importing trades...
+            </span>
+
+          } @else {
+
+            <mat-icon>
+              cloud_upload
+            </mat-icon>
+
+            <span>
+              Import trading history
+            </span>
+
+          }
+
+        </button>
+
+      }
+
+    </div>
+
+
+    <!-- =========================================
+         BROKER STATUS
+    ========================================== -->
+
+    <div
+      class="div-card broker-card p-3 mt-4"
+    >
+
+      <div class="broker-header">
+
+        <div>
+
+          <span class="broker-section-label">
+            Broker connection
+          </span>
+
+          <span class="broker-section-subtitle">
+            Available import sources
+          </span>
+
+        </div>
+
+
+        <span class="supported-count">
+          1 supported
+        </span>
+
+      </div>
+
+
+      <div class="broker-item">
+
+        <div
+          class="broker-logo d-flex align-items-center justify-content-center"
+        >
+
+          <mat-icon
+            class="d-flex align-items-center justify-content-center"
+          >
+            account_balance
+          </mat-icon>
+
+        </div>
+
+
+        <div class="broker-info">
+
+          <span class="broker-name">
+            Interactive Brokers
+          </span>
+
+          <span class="broker-description">
+            CSV trading history
+          </span>
+
+        </div>
+
+
+        <div class="broker-status-label">
+
+          <span class="broker-status"></span>
+
+          Supported
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================================
+         DANGER ZONE
+    ========================================== -->
+
+    <div
+      class="div-card light-red-transparent-border  p-3 mt-4"
+    >
+
+      <!-- DANGER HEADER -->
+
+      <div class="row d-flex  py-2">
+
+        <div class="row col-10">
+
+          <div class="col-12  text-danger medium-label text-start">
+          >  Danger zone
+          </div>
+
+          <div class="col-12  text-secondary  small-label">
+            Permanently remove your imported
+            trading history
+          </div>
+
+        </div>
+
+        <div  class="col-2 d-flex  justify-content-end  p-0 ">
+          <mat-icon class="text-danger">
+            warning
+          </mat-icon>
+        </div>
+
+
+      </div>
+
+
+      <!-- DANGER CONTENT -->
+
+      <div class="row p-2  gap-3 d-flex align-items-center justify-content-center">
+
+        <div class="col-12 text-secondary small-label">
+
+          <strong>
+            Delete all trades
+          </strong>
+
+          <span>
+            This will permanently delete all trades
+            from your trading journal.
+            This action cannot be undone.
+          </span>
+
+        </div>
+
+
+        <button
+          type="button"
+          mat-raised-button
+          class="delete-all-btn text-center text-danger d-flex align-items-center justify-content-center   p-2 col-10 col-lg-4"
+          [disabled]="loading || deleting"
+          (click)="confirmDeleteAllTrades()"
+        >
+
+          @if (deleting) {
+
+            <mat-spinner
+              diameter="18"
+              class="delete-spinner"
+            >
+            </mat-spinner>
+
+            <span>
+              Deleting trades...
+            </span>
+
+          } @else {
+
+            <mat-icon class="mx-1">
+              delete_forever
+            </mat-icon>
+
+            <span>
+              Delete all trades
+            </span>
+
+          }
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

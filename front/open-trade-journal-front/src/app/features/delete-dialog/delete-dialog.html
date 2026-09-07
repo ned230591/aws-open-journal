@@ -1,0 +1,47 @@
+<div class="div-card p-4 rounded-0">
+
+  <div class="text-danger d-flex align-items-center gap-2  ">
+    <mat-icon>warning</mat-icon>
+    <span class=" medium-label ">
+      Delete all trades?</span>
+  </div>
+
+
+
+  <mat-dialog-content>
+    <p class=" text-grey  medium-label">
+      You are about to permanently delete all trading history.
+    </p>
+    <p class="text-danger  medium-label">
+      This action cannot be undone.
+    </p>
+  </mat-dialog-content>
+
+  <mat-dialog-actions
+    align="end"
+    class="gap-2 "
+  >
+
+    <button
+      type="button"
+      class="cancel-btn p-2 rounded-1 small-label"
+      [mat-dialog-close]="false"
+    >
+      Cancel
+    </button>
+
+    <button
+      type="button"
+      class="confirm-delete-btn  p-2 rounded-1 small-label d-flex align-items-center justify-content-center"
+      [mat-dialog-close]="true"
+    >
+      <mat-icon>
+        delete_forever
+      </mat-icon>
+
+      Delete all
+    </button>
+
+  </mat-dialog-actions>
+
+</div>

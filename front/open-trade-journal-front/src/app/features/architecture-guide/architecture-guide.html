@@ -1,0 +1,438 @@
+<div class=" p-4 m-4">
+  <!-- header -->
+<div class="d-flex align-items-center mb-4">
+  <div class="header-icon ">
+    <mat-icon class="text-info">lan</mat-icon>
+  </div>
+  <div class="mx-4">
+    <h2 class="title text-info mt-2">Trade Journal Architecture</h2>
+    <p class="large text-secondary fw-bold">Explore how the frontend, backend, authentication, database, and real-time trading infrastructure work together.</p>
+  </div>
+</div>
+
+
+  <details class="faq-item" open>
+    <summary>
+      <span class="faq-index mx-2 fw-bold">01</span>
+      <span class="faq-question fw-bold">What is the overall architecture of Trade Journal?</span>
+      <mat-icon>expand_more</mat-icon>
+    </summary>
+    <div class="faq-content p-4">
+      <p>
+        Trade Journal is built as a modern full-stack application using
+        <strong>Angular</strong> for the frontend and
+        <strong>Spring Boot</strong> for the backend.
+      </p>
+
+      <p>
+        Authentication and authorization are handled through
+        <strong>Keycloak</strong> using the
+        <strong>OAuth 2.0 / OpenID Connect</strong> protocols.
+        Real-time trade events are distributed through
+        <strong>Apache Kafka</strong>.
+      </p>
+
+      <div class="row d-flex align-items-center justify-content-center gap-2">
+        <div class="row col-12 col-lg-5  light-grey-bg p-2 mx-2">
+          <div class="row">
+            <div class="col-12 text-center text-info">01</div>
+            <div class="col-12 text-center fw-bold small text-light">Angular</div>
+            <div class="col-12 text-center small">Frontend / UI</div>
+          </div>
+        </div>
+        <div class="row  col-12 col-lg-5   p-2 mx-2 light-grey-bg ">
+          <div class="row">
+            <div class="col-12 text-center text-info">02</div>
+            <div class="col-12 text-center fw-bold small text-light">Keycloak</div>
+            <div class="col-12 text-center small">Authentication</div>
+          </div>
+        </div>
+
+        <div class="row  col-12 col-lg-5  p-2 mx-2 light-grey-bg ">
+          <div class="row">
+            <div class="col-12 text-center text-info">03</div>
+            <div class="col-12 text-center fw-bold small text-light">Spring Boot</div>
+            <div class="col-12 text-center small">REST API / Business Logic</div>
+          </div>
+        </div>
+
+        <div class="row  col-12 col-lg-5  p-2 mx-2 light-grey-bg ">
+          <div class="row">
+            <div class="col-12 text-center text-info">04</div>
+            <div class="col-12 text-center fw-bold small text-light">Database</div>
+            <div class="col-12 text-center small">Trade Journal Data</div>
+          </div>
+        </div>
+
+</div>
+
+    </div>
+  </details>
+
+
+  <details class="faq-item ">
+    <summary class="">
+      <span class="faq-index">02</span>
+      <span class="faq-question">How does authentication work?</span>
+      <mat-icon>expand_more</mat-icon>
+    </summary>
+    <div class="faq-content p-4">
+      <p>
+        Trade Journal uses <strong>Keycloak</strong> as the centralized
+        identity and access management system.<br>
+        The Angular application does not directly manage user passwords.
+        Instead, users are redirected to Keycloak to authenticate.
+        Keycloak then issues the required authentication tokens.<br>
+        The application uses
+        <strong>OAuth 2.0</strong> and
+        <strong>OpenID Connect</strong> to establish the authenticated
+        user session and securely communicate the user's identity.
+      </p>
+      <div class="architecture-code p-3">
+        <div> <span class="text-info " >&gt; </span>User opens Trade Journal</div>
+        <div> <span class="text-info " >&gt; </span> Angular redirects to Keycloak</div>
+        <div> <span class="text-info " >&gt; </span> User authenticates</div>
+        <div> <span class="text-info " >&gt; </span> Keycloak issues tokens</div>
+        <div> <span class="text-info " >&gt; </span> Angular uses the access token for API requests</div>
+        <div><span class="text-info " >&gt; </span> Spring Boot validates the request</div>
+      </div>
+      <div class="faq-tip p-3  my-3">
+        <div>
+          <strong>SECURITY</strong>
+          Authentication is centralized in Keycloak, allowing the
+          application backend to protect its APIs without storing
+          user credentials directly.
+        </div>
+      </div>
+    </div>
+  </details>
+
+
+  <details class="faq-item">
+    <summary>
+      <span class="faq-index">03</span>
+      <span class="faq-question">What is responsible for the frontend?</span>
+      <mat-icon>expand_more</mat-icon>
+    </summary>
+    <div class="faq-content p-4">
+      <p>The user interface is implemented with<strong>Angular</strong>.<br>
+        Angular is responsible for displaying trading information,
+        handling user interactions, managing application state, and
+        communicating with the backend REST APIs.
+      </p>
+      <div class="row  d-flex   justify-content-center gap-4">
+          <div class="row d-flex  col-12 col-lg-5  p-3  align-items-start justify-content-start">
+            <div class="text-info fw-bold  col-12"><i class="bi bi-speedometer2 fs-5 mx-2"></i>Dashboard</div>
+            <span>
+            Performance overview, P&amp;L and trading statistics.
+          </span>
+          </div>
+
+          <div class="row d-flex  col-12 col-lg-5  p-3  align-items-start justify-content-start">
+            <div class="text-info fw-bold  col-12"><i class="bi bi-graph-up fs-5 mx-2"></i> Analysis</div>
+            <span>
+            P&amp;L history and stock performance analysis.
+          </span>
+          </div>
+
+          <div class="row d-flex col-12 col-lg-5  p-3  align-items-start  justify-content-start">
+            <div class="text-info fw-bold  col-12"><i class="bi bi-signpost-split fs-5 mx-2"></i>Trade Trace</div>
+            <span>
+            Trading activity, history and trade evaluation.
+          </span>
+          </div>
+
+          <div class="row d-flex  col-12 col-lg-5  p-3  align-items-start justify-content-start">
+            <div>
+              <div class="text-info fw-bold  col-12  "> <i class="bi bi-cloud-arrow-up fs-5 mx-2"></i> Import</div>
+              <span>
+            Import trading history from CSV files.  </span>
+            </div>
+
+
+          </div>
+
+
+
+
+      </div>
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary>
+      <span class="faq-index">04</span>
+      <span class="faq-question">What is responsible for the backend?</span>
+      <mat-icon>expand_more</mat-icon>
+    </summary>
+    <div class="faq-content p-4">
+      <p>
+        The backend is implemented using
+        <strong>Spring Boot</strong>.<br>
+        It exposes REST APIs used by the Angular frontend and contains
+        the application's business logic, trade processing,
+        persistence, evaluation management and integration with the
+        real-time messaging infrastructure.
+      </p>
+      <div class="architecture-code p-3">
+        <div><span class="text-info " >&gt; </span> Angular HTTP request</div>
+        <div><span class="text-info " >&gt; </span> Spring Boot REST Controller</div>
+        <div><span class="text-info " >&gt; </span> Service / Business Logic</div>
+        <div><span class="text-info " >&gt; </span> Repository / Persistence</div>
+        <div><span class="text-info " >&gt; </span>Database</div>
+      </div>
+      <p class="my-3">
+        Spring Boot also acts as the security boundary for protected
+        backend resources by validating authenticated requests.
+      </p>
+    </div>
+  </details>
+
+
+
+
+  <details class="faq-item">
+    <summary>
+      <span class="faq-index">05</span>
+      <span class="faq-question">
+        How is Apache Kafka used for real-time trading?
+      </span>
+      <mat-icon>expand_more</mat-icon>
+    </summary>
+
+    <div class="faq-content p-4">
+
+      <p>
+        <strong>Apache Kafka</strong> is used as the event-streaming
+        layer for real-time trading updates.<br>
+        Instead of the frontend continuously polling the backend for
+        new trades, trade events can be published to Kafka and
+        processed asynchronously by the backend.
+      </p>
+      <div class="row d-flex align-items-center justify-content-center ">
+        <div class="row col-12 col-lg-5  light-grey-bg p-2 text-center m-3">
+          <span class="text-info fw-bold small">01</span>
+          <strong>IBKR / TWS</strong>
+          <small>Trade execution</small>
+        </div>
+        <div class="row col-12 col-lg-5  light-grey-bg p-2 text-center m-3">
+          <span class="text-info fw-bold small">02</span>
+          <strong>Trade Producer</strong>
+          <small>Publishes event</small>
+        </div>
+        <div class="row col-12 col-lg-5  light-grey-bg p-2 text-center m-3">
+          <span class="text-info fw-bold small">03</span>
+          <strong>Kafka</strong>
+          <small>Event stream</small>
+        </div>
+        <div class="row col-12 col-lg-5  light-grey-bg p-2 text-center m-3">
+          <span class="text-info fw-bold small">04</span>
+          <strong>Spring Boot</strong>
+          <small>Consumes event</small>
+        </div>
+        <div class="row col-12 col-lg-5  light-grey-bg p-2 text-center m-3">
+          <span class="text-info fw-bold small">05</span>
+          <strong>Angular</strong>
+          <small>Real-time update</small>
+        </div>
+      </div>
+
+
+      <div class="architecture-code p-3">
+
+        <div><span class="text-info " >&gt; </span> Trade executed in IBKR / TWS</div>
+        <div><span class="text-info " >&gt; </span>Trade event is produced</div>
+        <div><span class="text-info " >&gt; </span> Kafka receives the event</div>
+        <div><span class="text-info " >&gt; </span> Spring Boot consumes the event</div>
+        <div><span class="text-info " >&gt; </span>Trade is processed and persisted</div>
+        <div><span class="text-info " >&gt; </span> Frontend receives the update</div>
+        <div><span class="text-info " >&gt; </span> UI updates without manual refresh</div>
+
+      </div>
+      <div class="faq-tip p-3 my-3">
+        <div>
+          <strong><span class="text-info fw-bold">&gt;</span> WHY KAFKA?</strong>
+          Kafka decouples trade producers from consumers and provides
+          a reliable event-streaming mechanism for processing trading
+          events asynchronously.
+        </div>
+      </div>
+    </div>
+
+  </details>
+
+
+
+  <details class="faq-item">
+
+    <summary>
+      <span class="faq-index">06</span>
+
+      <span class="faq-question">
+        What happens to a trade event inside Kafka?
+      </span>
+
+      <mat-icon>expand_more</mat-icon>
+    </summary>
+
+    <div class="faq-content p-4">
+
+      <p>
+        A trade event is published to a Kafka
+        <strong>topic</strong>. Kafka stores the event in the topic
+        so that one or more consumers can process it.
+      </p>
+
+      <div class="row d-flex align-items-center justify-content-center ">
+        <div class="row col-12 col-lg-5  light-grey-bg p-2 text-center m-3">
+          <span class="text-info small fw-bold">01</span>
+          <strong>Producer</strong>
+          <p>
+            Creates and publishes a trade event.
+          </p>
+        </div>
+        <div class="row col-12 col-lg-5  light-grey-bg p-2 text-center m-3">
+          <span class="text-info small fw-bold">02</span>
+          <strong>Kafka Topic</strong>
+          <p>
+            Receives and stores the event stream.
+          </p>
+        </div>
+        <div class="row col-12 col-lg-5  light-grey-bg p-2 text-center m-3">
+          <span class="text-info small fw-bold">03</span>
+          <strong>Consumer</strong>
+          <p>
+            Spring Boot consumes the trade event.
+          </p>
+        </div>
+        <div class="row col-12 col-lg-5  light-grey-bg p-2 text-center m-3">
+          <span class="text-info small fw-bold">04</span>
+          <strong>Processing</strong>
+          <p>
+            The application processes and persists the trade.
+          </p>
+        </div>
+      </div>
+      <p class="p-2">
+        This architecture separates the system that produces trading
+        events from the services that consume and process them.
+      </p>
+
+    </div>
+
+  </details>
+
+
+  <details class="faq-item">
+    <summary>
+      <span class="faq-index">07</span>
+      <span class="faq-question">
+        How does Angular communicate with Spring Boot?
+      </span>
+      <mat-icon>expand_more</mat-icon>
+    </summary>
+
+    <div class="faq-content p-4">
+      <p>
+        Angular communicates with the Spring Boot backend through
+        protected <strong>REST APIs</strong>.
+      </p>
+      <div class="architecture-code p-3 d-flex justify-content-center">
+        <div>Angular</div>
+        <span><i class="bi bi-arrow-right text-info  mx-2"></i></span>
+        <div>HTTP / REST</div>
+        <span><i class="bi bi-arrow-right text-info  mx-2"></i></span>
+        <div>Spring Boot</div>
+        <span><i class="bi bi-arrow-right text-info  mx-2"></i></span>
+        <div>Database</div>
+      </div>
+      <p class="p-2">
+        API requests include the user's authentication token.
+        Spring Boot validates the request before allowing access to
+        protected resources.<br>
+        Responses are then returned to Angular, where the application
+        updates the corresponding page or component.
+      </p>
+    </div>
+  </details>
+
+
+
+
+  <details class="faq-item">
+
+    <summary>
+      <span class="faq-index">08</span>
+      <span class="faq-question">
+        What are the main responsibilities of each technology?
+      </span>
+      <mat-icon>expand_more</mat-icon>
+    </summary>
+    <div class="faq-content p-4">
+      <div class="row d-flex align-items-center justify-content-center ">
+        <div class=" col-12 col-lg-5   p-2 text-center m-3">
+          <div class="text-info small fw-bold"><i class="bi bi-code-slash mx-2 text-info fw-bold fs-5 "></i>Angular</div>
+          <span>
+            User interface, navigation, user interactions and API
+            communication.
+          </span>
+        </div>
+
+        <div class=" col-12 col-lg-5   p-2 text-center m-3">
+            <div class="text-info small fw-bold"><i class="bi bi-shield-lock  mx-2 text-info fw-bold fs-5"></i>Keycloak</div>
+          <span>
+            Identity management, authentication and access control.
+          </span>
+        </div>
+
+        <div class=" col-12 col-lg-5   p-2 text-center m-3">
+          <div class="text-info small fw-bold"><i class="bi bi-person-check text-info mx-2 fw-bold fs-5"></i>OAuth 2.0 / OIDC</div>
+          <span>
+            Secure authentication and token-based authorization.
+          </span>
+        </div>
+
+        <div class=" col-12 col-lg-5   p-2 text-center m-3">
+          <div class="text-info small fw-bold"><i class="bi bi-gear-wide-connected  mx-2 fw-bold fs-5"></i>Spring Boot</div>
+          <span>
+            REST APIs, business logic, persistence and backend
+            processing.
+          </span>
+        </div>
+
+        <div class=" col-12 col-lg-5   p-2 text-center m-3">
+          <div class="text-info small fw-bold"><i class="bi bi-broadcast  mx-2 fw-bold fs-5"></i> Apache Kafka</div>
+          <span>
+            Real-time event streaming and asynchronous trade
+            processing.
+          </span>
+        </div>
+
+        <div class=" col-12 col-lg-5   p-2 text-center m-3">
+          <div class="text-info small fw-bold"><i class="bi bi-database  mx-2 fw-bold fs-5"></i> Database</div>
+          <span>
+            Persistent storage for trades, evaluations and application
+            data.
+          </span>
+        </div>
+
+      </div>
+
+      <div class="faq-tip p-2 my-3">
+
+        <span>&gt;</span>
+
+        <strong>
+          The architecture separates the presentation layer,
+          authentication layer, business logic, persistence and
+          real-time event processing, making each part responsible for
+          a specific concern.
+        </strong>
+
+      </div>
+
+    </div>
+
+  </details>
+
+</div>

@@ -1,0 +1,52 @@
+@use '../styles/colors' as *;
+
+.layout {
+  height:100vh;
+}
+.sidebar {
+  width:260px;
+  border:none;
+}
+
+.content {
+  min-height:100vh;
+}
+.mobile-open-icon {
+  width:100px;
+  height:100px;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  border-radius:14px;
+  cursor:pointer;
+  background:
+    radial-gradient(
+        circle at 30% 25%,
+        rgba(67, 235, 151, 0.18),
+        transparent 45%
+    ),
+    linear-gradient(
+        145deg,
+        #10251f 0%,
+        #0b181c 55%,
+        #071014 100%
+    );
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.30),
+    0 0 20px rgba(53, 217, 130, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+.mobile-open-icon img {
+  width:50px;
+}
+.mobile-open-icon:hover {
+  transform: scale(1.06);
+  border-color: rgba(53, 217, 130, 0.40);
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.35),
+    0 0 28px rgba(53, 217, 130, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}

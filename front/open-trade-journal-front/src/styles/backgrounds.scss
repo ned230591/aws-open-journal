@@ -1,0 +1,57 @@
+.no-trade-bg {
+  background: #494848;
+  border-color: #eef1ff;
+}
+.profit-bg {
+  background: #16a34a;
+  box-shadow: 0 0 4px rgba(0, 255, 102, 0.3);
+}
+
+.profit-light-bg {
+  border:1px solid rgba(11, 244, 130, 0.34);
+  background-color: rgba(13, 205, 13, 0.12);
+}
+.profit-light-bg:hover {
+  border:1px solid rgba(11, 244, 130, 0.53);
+  transform: scale(1.03);
+  background-color: rgba(13, 205, 13, 0.24);
+
+}
+.loss-bg {
+  background: #ff3333;
+  border:1px solid  rgba(255, 85, 85, 0.34);
+}
+
+.loss-light-bg {
+  background: rgba(221, 25, 25, 0.13);
+  border:1px solid rgba(243, 53, 53, 0.25);
+}
+
+.loss-light-bg:hover {
+  background: rgba(151, 13, 13, 0.29);
+  border:1px solid rgba(243, 53, 53, 0.58);
+  transform: scale(1.03);
+
+}
+
+.light-grey-bg{
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.035),
+        rgba(255, 255, 255, 0.012)
+    );
+}
+
+.light-grey-bg:hover{
+  transform: scale(1.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.14),
+        rgba(255, 255, 255, 0.08)
+    );
+}
+
