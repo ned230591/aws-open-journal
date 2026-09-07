@@ -11,6 +11,8 @@ services:
       BREVO_FROM_EMAIL: openTradeJournal@outlook.com
       BREVO_FROM_NAME: Open Trade Journal Admin
       BREVO_REPLY_TO: openTradeJournal@outlook.com
+    secrets:
+      - brevo_api_key
 
     expose:
       - "8085"
