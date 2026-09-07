@@ -7,6 +7,7 @@ services:
     restart: unless-stopped
 
     environment:
+      api-key-file: /run/secrets/brevo_api_key
       BREVO_FROM_EMAIL: openTradeJournal@outlook.com
       BREVO_FROM_NAME: Open Trade Journal Admin
       BREVO_REPLY_TO: openTradeJournal@outlook.com
@@ -445,3 +446,6 @@ networks:
   keycloak-network:
 
   open-trade-journal:
+secrets:
+  brevo_api_key:
+    file: ./brevo_api_key.txt
