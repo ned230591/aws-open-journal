@@ -229,8 +229,8 @@ services:
 
   keycloak:
     build:
-      context: ./keycloack
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: keycloack/Dockerfile
     container_name: keycloak
     restart: unless-stopped
 
