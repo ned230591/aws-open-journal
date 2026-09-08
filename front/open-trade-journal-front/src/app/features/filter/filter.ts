@@ -39,6 +39,7 @@ export class Filter implements OnInit {
 
   ngOnInit(): void {
     this.restoreFilterFromCookie();
+    this.applyFilter();
   }
 
 
