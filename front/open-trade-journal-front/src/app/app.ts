@@ -66,4 +66,7 @@ export class App implements AfterViewInit {
     return this.keycloak.isLoggedIn();
   }
 
+getUsername() {
+  return  this.keycloak.getUsername();
+  }
 }

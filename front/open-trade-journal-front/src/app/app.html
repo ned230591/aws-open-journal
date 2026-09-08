@@ -1,25 +1,31 @@
 @if (isLoggedIn) {
-  <mat-sidenav-container class="layout">
-    <mat-sidenav #drawer class="sidebar" [mode]="isMobile ? 'over' : 'side'"
-      [opened]="!isMobile">
-      <app-sidebar></app-sidebar>
-    </mat-sidenav>
-    <mat-sidenav-content >
-      @if (isMobile) {
-        <mat-toolbar class="mobile-toolbar mx-0  my-4 p-4 ">
-          <button class="mobile-open-icon my-4  p-4 "
-                  (click)="drawer.open()">
-            <img src="logo-mobile.png " />
-          </button>
-        </mat-toolbar>
-      }
-      <main class="content m-0 p-0">
-        <router-outlet></router-outlet>
-      </main>
-    </mat-sidenav-content>
-  </mat-sidenav-container>
+
+<mat-sidenav-container class="layout">
+  <mat-sidenav #drawer class="sidebar" [mode]="isMobile ? 'over' : 'side'"
+               [opened]="!isMobile">
+    <app-sidebar></app-sidebar>
+  </mat-sidenav>
+  <mat-sidenav-content >
+    @if (isMobile) {
+    <mat-toolbar class="mobile-toolbar mx-0  my-4 p-4 ">
+      <button class="mobile-open-icon my-4  p-4 "
+              (click)="drawer.open()">
+        <img src="logo-mobile.png " />
+      </button>
+    </mat-toolbar>
+    }
+    <main class="content m-0 p-0">
+      <div class="row p-0 m-0 d-flex align-items-center justify-content-end  ">
+        <div class=" m-2  text-white fs-5 p-2 w-auto  d-flex align-items-center justify-content-center text-white">Welcome back {{getUsername()}}
+          <i class="bi bi-person mx-2 user-icon d-flex align-items-center justify-content-center  rounded-2 "></i></div>
+      </div>
+
+      <router-outlet></router-outlet>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>
 }@else {
-  <main class="content m-0 p-0">
-    <router-outlet></router-outlet>
-  </main>
+<main class="content m-0 p-0">
+  <router-outlet></router-outlet>
+</main>
 }

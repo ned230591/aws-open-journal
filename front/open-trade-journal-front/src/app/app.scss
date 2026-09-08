@@ -50,3 +50,19 @@
     0 0 28px rgba(53, 217, 130, 0.16),
     inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
+
+.user-icon {
+    width:50px;
+      height:50px;
+      border:1px rgb(142 235 142) solid ;
+       background-color: #c5d0cb30;
+         color: rgb(142 235 142) !important;
+
+  }
+.user-icon:hover {
+      transform:scale(1.07);;
+
+         background-color: rgb(181 211 197 / 19%);
+
+
+  }
