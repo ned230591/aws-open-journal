@@ -44,7 +44,7 @@ export class Filter implements OnInit {
 
 
   private restoreFilterFromCookie(): void {
-    const savedPeriod = this.cookieService.getCookie('dashboardSelectedPeriod');
+     savedPeriod = this.cookieService.getCookie('dashboardSelectedPeriod');
     if(!savedPeriod || savedPeriod.length==0)
       savedPeriod="month";
     const savedStartDate = this.cookieService.getCookie('dashboardStartDate');
