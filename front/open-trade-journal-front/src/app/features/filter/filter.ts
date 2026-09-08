@@ -63,6 +63,7 @@ export class Filter implements OnInit {
         'custom'
       ].includes(savedPeriod)
     ) {
+       this.cookieService.setCookie('dashboardSelectedPeriod' , 'month')
       this.selectedPeriod = savedPeriod;
     }
 
