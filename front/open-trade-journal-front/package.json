@@ -1,6 +1,13 @@
+
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "test": "ng test"
+  },
   "cli": {
     "packageManager": "npm",
     "analytics": false
@@ -81,3 +88,4 @@
     }
   }
 }
+
