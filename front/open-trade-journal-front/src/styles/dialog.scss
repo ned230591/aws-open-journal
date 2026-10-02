@@ -1,0 +1,28 @@
+.dialog {
+  max-height: 80vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: #0c35223b;
+  border: 1px solid rgba(144, 233, 244, 0.38);
+  box-shadow:
+    0 25px 70px rgba(228, 219, 219, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.27),
+    0 0 35px rgba(225, 239, 231, 0.44);
+  border-radius: 4px !important;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(144, 233, 244, 0.36) #211d1e;
+}
+.dialog::-webkit-scrollbar {
+  width: 9px;
+}
+.dialog::-webkit-scrollbar-track {
+  background: #211d1e;
+}
+.dialog::-webkit-scrollbar-thumb {
+  background: #3a3a3a;
+  border-radius: 6px;
+  border: 2px solid #211d1e;
+}
+.dialog::-webkit-scrollbar-thumb:hover {
+  background: #4a4a4a;
+}

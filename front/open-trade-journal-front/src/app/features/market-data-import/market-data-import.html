@@ -1,0 +1,264 @@
+<div class="page-container m-4 p-4">
+  <app-page-header
+    icon="bi-cloud-download"
+    title="Market Data Import"
+    subtitle="Download 1-minute candles from Databento and save them to the database."
+  ></app-page-header>
+
+  <!-- CANDLE IMPORT -->
+  <div class="div-card p-4 mt-4">
+    <div class="text-info fs-6 fw-bold mb-2">1. DOWNLOAD CANDLES</div>
+    <form class="row d-flex align-items-center" [formGroup]="importForm">
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div>
+          <label for="symbol" class="grey small fw-bold">SYMBOL</label>
+          <input
+            id="symbol"
+            type="text"
+            formControlName="symbol"
+            class="w-100 p-2"
+            placeholder="e.g. NVDA"
+          />
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div>
+          <label class="grey small fw-bold">FROM</label>
+          <mat-form-field appearance="outline" class="custom-datepicker rounded-2 h-input">
+            <input
+              matInput
+              class="bg-transparent"
+              [matDatepicker]="importFromPicker"
+              formControlName="fromDate"
+              readonly
+              placeholder="mm/dd/yyyy"
+            />
+            <mat-datepicker-toggle matIconSuffix [for]="importFromPicker"></mat-datepicker-toggle>
+            <mat-datepicker #importFromPicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div>
+          <label class="grey small fw-bold">TO</label>
+          <mat-form-field appearance="outline" class="custom-datepicker rounded-2 h-input">
+            <input
+              matInput
+              class="bg-transparent"
+              [matDatepicker]="importToPicker"
+              formControlName="toDate"
+              readonly
+              placeholder="mm/dd/yyyy"
+            />
+            <mat-datepicker-toggle matIconSuffix [for]="importToPicker"></mat-datepicker-toggle>
+            <mat-datepicker #importToPicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div>
+          <label for="timeframe" class="grey small fw-bold d-flex align-items-center gap-1">
+            <span class="hint-icon" [matTooltip]="timeframeExplanation">?</span>
+            TIMEFRAME
+          </label>
+          <input id="timeframe" type="text" formControlName="timeframe" class="w-100 p-2" />
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="green-transparent-button col-12 mt-3 p-2 rounded-2"
+        (click)="import()"
+        [disabled]="loading()"
+      >
+        @if (loading()) {
+          DOWNLOADING &amp; SAVING...
+        } @else {
+          DOWNLOAD &amp; SAVE CANDLES
+        }
+      </button>
+    </form>
+
+    @if (errorMessage) {
+      <div class="error-bg p-2 rounded-2 negative my-2">
+        <span class="fw-bold">[ERROR]</span> {{ errorMessage }}
+      </div>
+    }
+
+    @if (successMessage) {
+      <div class="profit-light-bg p-2 rounded-2 positive my-2">
+        <span class="fw-bold">[DONE]</span> {{ successMessage }}
+      </div>
+    }
+
+    <div class="grey small mt-3">
+      Large date ranges can take a while — Databento is queried and every candle is saved before
+      this finishes, so the page will sit on "Downloading &amp; saving..." until it's done.
+    </div>
+  </div>
+
+  <!-- GENERATE DAILY DATASET -->
+  <div class="div-card p-4 mt-4">
+    <div class="text-info fs-6 fw-bold mb-2 d-flex align-items-center gap-1">
+      <span class="hint-icon" [matTooltip]="generateExplanation">?</span>
+      2. GENERATE DAILY DATASET
+    </div>
+    <form class="row d-flex align-items-center" [formGroup]="generateForm">
+      <div class="col-12 col-sm-6 col-lg-4">
+        <div>
+          <label for="generateSymbol" class="grey small fw-bold">SYMBOL</label>
+          <input
+            id="generateSymbol"
+            type="text"
+            formControlName="symbol"
+            class="w-100 p-2"
+            placeholder="e.g. NVDA"
+          />
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-4">
+        <div>
+          <label class="grey small fw-bold">FROM</label>
+          <mat-form-field appearance="outline" class="custom-datepicker rounded-2 h-input">
+            <input
+              matInput
+              class="bg-transparent"
+              [matDatepicker]="generateFromPicker"
+              formControlName="fromDate"
+              readonly
+              placeholder="mm/dd/yyyy"
+            />
+            <mat-datepicker-toggle matIconSuffix [for]="generateFromPicker"></mat-datepicker-toggle>
+            <mat-datepicker #generateFromPicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-4">
+        <div>
+          <label class="grey small fw-bold">TO</label>
+          <mat-form-field appearance="outline" class="custom-datepicker rounded-2 h-input">
+            <input
+              matInput
+              class="bg-transparent"
+              [matDatepicker]="generateToPicker"
+              formControlName="toDate"
+              readonly
+              placeholder="mm/dd/yyyy"
+            />
+            <mat-datepicker-toggle matIconSuffix [for]="generateToPicker"></mat-datepicker-toggle>
+            <mat-datepicker #generateToPicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="green-transparent-button col-12 mt-3 p-2 rounded-2"
+        (click)="generate()"
+        [disabled]="generating()"
+      >
+        @if (generating()) {
+          GENERATING...
+        } @else {
+          GENERATE DAILY DATASET
+        }
+      </button>
+    </form>
+
+    @if (generateErrorMessage) {
+      <div class="error-bg p-2 rounded-2 negative my-2">
+        <span class="fw-bold">[ERROR]</span> {{ generateErrorMessage }}
+      </div>
+    }
+
+    @if (generateSuccessMessage) {
+      <div class="profit-light-bg p-2 rounded-2 positive my-2">
+        <span class="fw-bold">[DONE]</span> {{ generateSuccessMessage }}
+      </div>
+    }
+  </div>
+
+  <!-- DATA COVERAGE -->
+  <div class="div-card p-4 mt-4">
+    <div class="text-info fs-6 fw-bold mb-2 d-flex align-items-center gap-1">
+      <span class="hint-icon" [matTooltip]="coverageExplanation">?</span>
+      3. CHECK DATA COVERAGE
+    </div>
+    <form class="row d-flex align-items-center" [formGroup]="coverageForm">
+      <div class="col-12 col-sm-6 col-lg-4">
+        <div>
+          <label for="coverageSymbol" class="grey small fw-bold">SYMBOL</label>
+          <input
+            id="coverageSymbol"
+            type="text"
+            formControlName="symbol"
+            class="w-100 p-2"
+            placeholder="e.g. NVDA"
+          />
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-4 mt-3">
+        <button
+          type="button"
+          class="green-transparent-button w-100 p-2 rounded-2"
+          (click)="checkCoverage()"
+          [disabled]="checkingCoverage()"
+        >
+          @if (checkingCoverage()) {
+            CHECKING...
+          } @else {
+            CHECK COVERAGE
+          }
+        </button>
+      </div>
+    </form>
+
+    @if (coverageError) {
+      <div class="error-bg p-2 rounded-2 negative my-2">
+        <span class="fw-bold">[ERROR]</span> {{ coverageError }}
+      </div>
+    }
+
+    @if (candleCoverage || datasetCoverage) {
+      <div class="row mt-3">
+        <div class="col-12 col-lg-6 mb-3">
+          <div class="grey small fw-bold mb-2">
+            CANDLE DATA (1-MIN) &mdash; {{ coverageSymbol }}
+          </div>
+          <div class="dark-green-bg rounded-2 p-3">
+            @if (candleCoverage && candleCoverage.length === 0) {
+              <div class="grey small">No candle data saved for this symbol.</div>
+            }
+            @for (period of candleCoverage; track period.from) {
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-calendar-range grey"></i>
+                <span class="small grey">{{ period.from }} &rarr; {{ period.to }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-6 mb-3">
+          <div class="grey small fw-bold mb-2">DAILY DATASET &mdash; {{ coverageSymbol }}</div>
+          <div class="dark-green-bg rounded-2 p-3">
+            @if (datasetCoverage && datasetCoverage.length === 0) {
+              <div class="grey small">No daily dataset generated for this symbol.</div>
+            }
+            @for (period of datasetCoverage; track period.from) {
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-calendar-range grey"></i>
+                <span class="small grey">{{ period.from }} &rarr; {{ period.to }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

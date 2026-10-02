@@ -1,8 +1,58 @@
+/* ============================================================
+   Centralized fluid type scale.
+   Every step scales smoothly between a MIN size (held at ~360px
+   viewport and below) and a MAX size (held at ~1400px and above)
+   via clamp() — no manual per-breakpoint overrides needed anywhere
+   else in the app. Every MIN matches or exceeds this app's current
+   smallest real-world size for that role, so this only ever grows
+   text on larger screens — it never shrinks anything further.
+   ============================================================ */
+:root {
+  --fs-2xs: clamp(0.75rem, 0.73rem + 0.1vw, 0.8125rem); /* 12 -> 13px */
+  --fs-xs: clamp(0.8125rem, 0.79rem + 0.12vw, 0.875rem); /* 13 -> 14px */
+  --fs-sm: clamp(0.875rem, 0.83rem + 0.25vw, 1rem); /* 14 -> 16px */
+  --fs-base: clamp(1rem, 0.96rem + 0.2vw, 1.125rem); /* 16 -> 18px */
+  --fs-md: clamp(1.125rem, 1.08rem + 0.22vw, 1.25rem); /* 18 -> 20px */
+  --fs-lg: clamp(1.25rem, 1.19rem + 0.3vw, 1.4375rem); /* 20 -> 23px */
+  --fs-xl: clamp(1.5rem, 1.42rem + 0.4vw, 1.75rem); /* 24 -> 28px */
+  --fs-2xl: clamp(1.75rem, 1.63rem + 0.6vw, 2.125rem); /* 28 -> 34px */
+  --fs-3xl: clamp(2rem, 1.8rem + 1vw, 2.625rem); /* 32 -> 42px */
+}
+
+/* Bootstrap ships fixed, non-responsive font-size utilities in its
+   precompiled CSS. Re-point the ones this app actually uses at the
+   fluid scale above so every existing `.fs-5` / `.fs-6` / `small`
+   usage becomes responsive app-wide without touching any template.
+   !important is required to win over Bootstrap's own !important
+   utility rules — this file loads after bootstrap.min.css. */
+.fs-1 {
+  font-size: var(--fs-3xl) !important;
+}
+.fs-2 {
+  font-size: var(--fs-2xl) !important;
+}
+.fs-3 {
+  font-size: var(--fs-xl) !important;
+}
+.fs-4 {
+  font-size: var(--fs-lg) !important;
+}
+.fs-5 {
+  font-size: var(--fs-md) !important;
+}
+.fs-6 {
+  font-size: var(--fs-base) !important;
+}
+small,
+.small {
+  font-size: var(--fs-sm) !important;
+}
+
 .medium-label {
   min-width: 55px;
   text-align: center;
   color: #b8b4b4;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   letter-spacing: 0.3px;
 }
@@ -15,27 +65,7 @@
 }
 .small-label {
   color: #bab5b5;
-  font-size: 12px;
+  font-size: var(--fs-2xs);
   font-weight: 700;
   letter-spacing: 0.3px;
 }
-
-
-.large-label {
-  color: #919090;
-  font-size: 0.98rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.7px;
-}
-
-@media (max-width: 768px) {
-
-  .large-label {
-    font-size: 0.60rem;
-    letter-spacing: 0.08em;
-  }
-
-}
-
-

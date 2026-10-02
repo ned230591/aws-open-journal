@@ -1,656 +1,323 @@
-<div class="div-card p-4">
-
-  <!-- ========================================= -->
+<div class="dialog">
   <!-- HEADER -->
-  <!-- ========================================= -->
-
-  <div
-    class="row my-2 py-2 d-flex align-items-center header"
-  >
-
-    <div class="col-10">
-
-      <div class="text-success fs-5 fw-bold">
-        &gt; Trade Evaluation
-      </div>
-
-      <div class="text-grey">
-        <span>
-          Review your trading decision
-        </span>
-      </div>
-
+  <div class="d-flex align-items-center justify-content-between p-4">
+    <div>
+      <div class="mb-2 text-info fs-5">> Trade Evaluation</div>
+      <small class="grey">Evaluate the execution, playbook adherence and mistakes</small>
     </div>
-
-    <div
-      class="col-2 d-flex align-items-center justify-content-end"
-    >
-
-      <button
-        type="button"
-        class="dialog-close text-danger p-1 d-flex align-items-center"
-        (click)="cancel()"
-      >
-        <mat-icon>
-          close
-        </mat-icon>
-      </button>
-
-    </div>
-
+    <button type="button" class="dialog-close btn btn-sm" (click)="cancel()" matTooltip="Close">
+      <mat-icon class="text-danger fw-bold">close</mat-icon>
+    </button>
   </div>
 
-
-  <!-- ========================================= -->
-  <!-- TRADE SUMMARY -->
-  <!-- ========================================= -->
-
-  <div class="row text-light p-2">
-
-    <div class="gap-4 pb-2 mx-4">
-
-      <span>
-
-        <span class="text-info">
-          &gt;
-        </span>
-
-        {{ data.trade.symbol }}
-
-        <span class="text-info">
-          -
-        </span>
-
-      </span>
-
-
-      <span>
-        {{ data.trade.buySell }}
-      </span>
-
-
-      <span class="text-info">
-        -
-      </span>
-
-
-      <span>
-        {{ data.trade.quantity }} shares
-      </span>
-
-
-      <span class="text-info">
-        -
-      </span>
-
-
-      <span>
-        {{ data.trade.tradePrice }}
-      </span>
-
+  @if (loading()) {
+    <div class="p-5 text-center">
+      <span class="positive loading">Loading evaluation...</span>
     </div>
+  }
 
-  </div>
-
-
-  <!-- ========================================= -->
-  <!-- POSITIVE / NEGATIVE -->
-  <!-- ========================================= -->
-
-  <div class="p-2">
-
-    <label class="fs-6 text-info">
-      &gt; How was this trade?
-    </label>
-
-
-    <div
-      class="row d-flex align-items-center justify-content-center p-2 gap-4"
-    >
-
-      <!-- ========================================= -->
-      <!-- POSITIVE -->
-      <!-- ========================================= -->
-
-      <div
-        class="col-11 col-xl-5 evaluation-section positive-section p-4 light-grey-bg my-2"
-      >
-
-        <div
-          class="d-flex align-items-center justify-content-between mb-2"
-        >
-
-          <label
-            class="positive medium-label fw-bold"
-          >
-            &gt; Positive Points
-          </label>
-
-
-          <button
-            type="button"
-            class="add-point-button positive d-flex align-items-center gap-1"
-            (click)="addPositivePoint()"
-            aria-label="Add positive point"
-          >
-
-            <mat-icon>
-              add
-            </mat-icon>
-
-          </button>
-
+  @if (!loading()) {
+    <div class="p-3">
+      <section class="mb-4 light-blue-bg p-4 rounded-4">
+        <h6 class="mb-3 grey fw-bold positive fs-6 text-uppercase">Trade Summary</h6>
+        <div class="row gap-3 d-flex align-items-center justify-content-center">
+          <div class="w-auto">
+            <div class="small grey text-uppercase">Symbol</div>
+            <div class="text-light">{{ trade.symbol || '-' }}</div>
+          </div>
+          <div class="w-auto text-uppercase">
+            <div class="small grey">Side</div>
+            <div class="text-light">{{ trade.buySell || '-' }}</div>
+          </div>
+          <div class="w-auto text-uppercase">
+            <div class="small grey">Quantity</div>
+            <div class="text-light">{{ trade.quantity || '-' }}</div>
+          </div>
+          <div class="w-auto text-uppercase">
+            <div class="small grey">Trade Price</div>
+            <div class="text-light">{{ trade.tradePrice || '-' }}</div>
+          </div>
         </div>
-
-
-        <div class="points-table">
-
-          @for (
-            point of positivePoints();
-            track $index
-            ) {
-
-            <div
-              class="point-row d-flex align-items-center gap-2"
-            >
-
-              <span
-                class="point-number text-success"
-              >
-                {{ $index + 1 }}.
-              </span>
-
-
+      </section>
+      <!--  EVALUATION-->
+      <section class="bg-transparent mb-4 row d-flex align-items-center justify-content-center p-4">
+        <h6 class="mb-3 text-info fs-6">Evaluation</h6>
+        <!-- PLAYBOOK ADHERENCE -->
+        <div class="mb-3 col-12 col-lg-4">
+          <label class="text-light pb-2 small text-uppercase">$ Playbook Adherence</label>
+          <select
+            class="bg-dark grey w-100 p-2"
+            [ngModel]="playbookAdherence()"
+            (ngModelChange)="setPlaybookAdherence($event)"
+          >
+            <option [ngValue]="null">Select rating</option>
+            @for (rating of evaluationRatings; track rating) {
+              <option [ngValue]="rating">{{ formatRating(rating) }}</option>
+            }
+          </select>
+        </div>
+        <!-- ENTRY QUALITY -->
+        <div class="mb-3 col-12 col-lg-4">
+          <label class="text-light text-uppercase pb-2 small">$ Entry Quality</label>
+          <select
+            class="bg-dark w-100 p-2 light-text"
+            [ngModel]="entryQuality()"
+            (ngModelChange)="setEntryQuality($event)"
+          >
+            <option [ngValue]="null">Select rating</option>
+            @for (rating of evaluationRatings; track rating) {
+              <option [ngValue]="rating">{{ formatRating(rating) }}</option>
+            }
+          </select>
+        </div>
+        <!-- EXIT QUALITY -->
+        <div class="mb-3 col-12 col-lg-4">
+          <label class="small pb-2 text-light text-uppercase">$ Exit Quality</label>
+          <select
+            class="bg-dark w-100 p-2 grey"
+            [ngModel]="exitQuality()"
+            (ngModelChange)="setExitQuality($event)"
+          >
+            <option [ngValue]="null">Select rating</option>
+            @for (rating of evaluationRatings; track rating) {
+              <option [ngValue]="rating">{{ formatRating(rating) }}</option>
+            }
+          </select>
+        </div>
+        <!-- RISK MANAGEMENT -->
+        <div class="mb-3 col-12 col-lg-4">
+          <label class="pb-2 small text-light text-uppercase">$ Risk Management</label>
+          <select
+            class="bg-dark w-100 p-2 grey"
+            [ngModel]="riskManagementQuality()"
+            (ngModelChange)="setRiskManagementQuality($event)"
+          >
+            <option [ngValue]="null">Select rating</option>
+            @for (rating of evaluationRatings; track rating) {
+              <option [ngValue]="rating">{{ formatRating(rating) }}</option>
+            }
+          </select>
+        </div>
+        <!-- EXECUTION QUALITY -->
+        <div class="mb-3 col-12 col-lg-4">
+          <label class="text-light text-uppercase small pb-2">$ Execution Quality</label>
+          <select
+            class="bg-dark p-2 w-100 grey"
+            [ngModel]="executionQuality()"
+            (ngModelChange)="setExecutionQuality($event)"
+          >
+            <option [ngValue]="null">Select rating</option>
+            @for (rating of evaluationRatings; track rating) {
+              <option [ngValue]="rating">{{ formatRating(rating) }}</option>
+            }
+          </select>
+        </div>
+        <!-- MISTAKE TYPE -->
+        <div class="mb-3 col-12 col-lg-4">
+          <label class="text-light text-uppercase small pb-2">$ Mistake</label>
+          <select
+            class="bg-dark p-2 w-100 grey"
+            [ngModel]="mistakeType()"
+            (ngModelChange)="setMistakeType($event)"
+          >
+            <option [ngValue]="null">Select mistake</option>
+            @for (mistake of mistakeTypes; track mistake) {
+              <option [ngValue]="mistake">{{ formatMistake(mistake) }}</option>
+            }
+          </select>
+        </div>
+      </section>
+      <div class="row d-flex p-4">
+        <!--  POSITIVE POINTS -->
+        <section class="p-4 mb-4 col-12 col-lg-6">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <label class="mb-2 positive small">$ Positive Points</label>
+          </div>
+          @for (point of positivePoints(); track $index) {
+            <div class="d-flex align-items-center gap-2 mb-2">
               <input
                 type="text"
-                class="point-input"
-                [ngModel]="positivePoints()[$index]"
-                (ngModelChange)="
-                  updatePositivePoint(
-                    $index,
-                    $event
-                  )
-                "
-                maxlength="500"
-                placeholder="What did you do well?"
+                class="p-2 w-100"
+                [ngModel]="point"
+                (ngModelChange)="updatePositivePoint($index, $event)"
+                placeholder="Positive point"
               />
-
-
               <button
                 type="button"
-                class="bg-transparent border-0 negative d-flex align-items-center justify-content-center"
+                class="bg-transparent border-0"
+                matTooltip="Remove point"
                 (click)="removePositivePoint($index)"
-                aria-label="Remove positive point"
               >
-
-                <mat-icon class="delete-icon">
-                  delete
-                </mat-icon>
-
+                <mat-icon class="text-danger">delete</mat-icon>
               </button>
-
             </div>
-
           }
 
-
-          @if (
-            positivePoints().length === 0
-            ) {
-
-            <div class="empty-points text-grey">
-              No positive points added yet.
-            </div>
-
-          }
-
-        </div>
-
-      </div>
-
-
-      <!-- ========================================= -->
-      <!-- NEGATIVE -->
-      <!-- ========================================= -->
-
-      <div
-        class="col-11 col-xl-5 evaluation-section negative-section p-4 light-grey-bg my-2"
-      >
-
-        <div
-          class="d-flex align-items-center justify-content-between mb-2"
-        >
-
-          <label
-            class="negative medium-label fw-bold"
-          >
-            &gt; Negative Points
-          </label>
-
-
-          <button
-            type="button"
-            class="add-point-button negative d-flex align-items-center gap-1"
-            (click)="addNegativePoint()"
-            aria-label="Add negative point"
-          >
-
-            <mat-icon>
-              add
-            </mat-icon>
-
-          </button>
-
-        </div>
-
-
-        <div class="points-table">
-
-          @for (
-            point of negativePoints();
-            track $index
-            ) {
-
-            <div
-              class="point-row d-flex align-items-center gap-2"
+          <div class="d-flex align-items-center gap-2 mt-2">
+            <input
+              type="text"
+              class="p-2 w-100"
+              [ngModel]="newPositivePoint()"
+              (ngModelChange)="newPositivePoint.set($event)"
+              (keydown)="onPositivePointKeydown($event)"
+              placeholder="Add positive point"
+            />
+            <button
+              type="button"
+              class="header-icon"
+              matTooltip="Add positive point"
+              (click)="addPositivePoint()"
             >
-
-              <span
-                class="point-number text-danger"
-              >
-                {{ $index + 1 }}.
-              </span>
-
-
+              <mat-icon class="text-info">add</mat-icon>
+            </button>
+          </div>
+        </section>
+        <!-- NEGATIVE POINTS-->
+        <section class="p-4 mb-4 col-12 col-lg-6">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <label class="small pb-2 negative">$ Negative Points</label>
+          </div>
+          @for (point of negativePoints(); track $index) {
+            <div class="d-flex align-items-center gap-2 mb-2">
               <input
                 type="text"
-                class="point-input"
-                [ngModel]="negativePoints()[$index]"
-                (ngModelChange)="
-                  updateNegativePoint(
-                    $index,
-                    $event
-                  )
-                "
-                maxlength="500"
-                placeholder="What could you improve?"
+                class="p-2 w-100"
+                [ngModel]="point"
+                (ngModelChange)="updateNegativePoint($index, $event)"
+                placeholder="Negative point"
               />
-
-
               <button
                 type="button"
-                class="bg-transparent border-0 negative d-flex align-items-center justify-content-center"
+                class="bg-transparent border-0"
+                matTooltip="Remove point"
                 (click)="removeNegativePoint($index)"
-                aria-label="Remove negative point"
               >
-
-                <mat-icon class="delete-icon">
-                  delete
-                </mat-icon>
-
+                <mat-icon class="text-danger">delete</mat-icon>
               </button>
-
             </div>
-
           }
-
-
-          @if (
-            negativePoints().length === 0
-            ) {
-
-            <div class="empty-points text-grey">
-              No negative points added yet.
-            </div>
-
-          }
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- ========================================= -->
-  <!-- COMMENT -->
-  <!-- ========================================= -->
-
-  <div class="row col-12 p-2 my-1">
-
-    <label class="text-grey my-2">
-
-      <small>
-        &gt; Comment
-      </small>
-
-    </label>
-
-
-    <textarea
-      [ngModel]="comment()"
-      (ngModelChange)="comment.set($event)"
-      class="bg-transparent text-grey"
-      rows="5"
-      maxlength="2000"
-      placeholder="What went well? What could you improve?"
-    ></textarea>
-
-  </div>
-
-
-  <!-- ========================================= -->
-  <!-- SCREENSHOTS -->
-  <!-- ========================================= -->
-
-  <div class="row p-2">
-
-    <label class="text-grey mb-2">
-
-      <small>
-        &gt; Screenshots
-      </small>
-
-    </label>
-
-
-    <!-- ========================================= -->
-    <!-- FILE INPUT -->
-    <!-- ========================================= -->
-
-    <input
-      #screenshotInput
-      type="file"
-      accept="image/png,image/jpeg,image/webp"
-      multiple
-      hidden
-      (change)="onScreenshotSelected($event)"
-    />
-
-
-    <!-- ========================================= -->
-    <!-- SAVED SCREENSHOTS -->
-    <!-- ========================================= -->
-
-    @if (
-      screenshots().length > 0
-      ) {
-
-      <div class="row p-2">
-
-        <label class="text-grey my-2">
-
-          <small>
-            &gt; Saved Screenshots
-          </small>
-
-        </label>
-
-
-        <div
-          class="saved-screenshots d-flex "
-        >
-
-          @for (
-            screenshot of screenshots();
-            track screenshot.id
-            ) {
-
-            <div
-              class="row  saved-screenshot  mx-2 r d-flex align_items-center justify-content-center "
+          <div class="d-flex align-items-center gap-2 mt-2">
+            <input
+              type="text"
+              class="p-2 w-100"
+              [ngModel]="newNegativePoint()"
+              (ngModelChange)="newNegativePoint.set($event)"
+              (keydown)="onNegativePointKeydown($event)"
+              placeholder="Add negative point"
+            />
+            <button
+              type="button"
+              class="header-icon"
+              matTooltip="Add negative point"
+              (click)="addNegativePoint()"
             >
+              <mat-icon class="text-info">add</mat-icon>
+            </button>
+          </div>
+        </section>
+      </div>
+      <!-- COMMENT -->
+      <section class="light-blue-bg mb-4 p-4 rounded-2">
+        <label class="small text-light pb-2">$ Comment</label>
+        <textarea
+          class="p-2 w-100"
+          [ngModel]="comment()"
+          (ngModelChange)="comment.set($event)"
+          placeholder="Describe what happened, what you noticed and what you would change..."
+        >
+        </textarea>
+      </section>
 
-
-              @if (
-                getScreenshotUrl(screenshot)
-                ) {
-
-                <img    [matTooltip]="screenshot.filename" class="p-0 m-0"
-
-                  [src]="getScreenshotUrl(screenshot)"
-                  [alt]="
-                    screenshot.filename ||
-                    'Saved trade screenshot'
-                  "
-                  loading="lazy"
-                />
-
-              } @else {
-
-                <div
-                  class="screenshot-loading d-flex align-items-center justify-content-center"
-                >
-
-                  <mat-icon>
-                    hourglass_top
-                  </mat-icon>
-
-                </div>
-
-              }
-
-
-
-
-
-                <div
-                  class="d-flex align-items-center gap-2 col-12 justify-content-center  my-2"
-                >
-
-                  <!-- OPEN -->
-
+      <!-- SCREENSHOTS -->
+      <section class="light-blue-bg mb-4 p-4 rounded-2">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <label class="small text-light pb-2">$ Screenshots</label>
+          <label class="btn screenshot-input small"
+            >Attach Screenshot
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              hidden
+              (change)="onScreenshotSelected($event)"
+            />
+          </label>
+        </div>
+        <!-- SAVED SCREENSHOTS -->
+        @if (screenshots().length > 0) {
+          <div class="mb-3">
+            <small class="text-muted d-block mb-2">Saved screenshots</small>
+            <div class="d-flex flex-wrap gap-3">
+              @for (screenshot of screenshots(); track screenshot.id) {
+                <div class="saved-screenshot position-relative">
+                  @if (getSavedScreenshotUrl(screenshot.id); as url) {
+                    <img
+                      [src]="url"
+                      [alt]="screenshot.filename || 'Screenshot'"
+                      (click)="openScreenshot(screenshot.id)"
+                    />
+                  }
                   <button
                     type="button"
-                    class="bg-transparent border-0 text-info d-flex align-items-center justify-content-center"
-                    (click)="openScreenshot(screenshot)"
-                    title="Open screenshot in new tab"
-                    aria-label="Open screenshot in new tab"
-                  >
-
-                    <mat-icon>
-                      open_in_new
-                    </mat-icon>
-
-                  </button>
-
-
-                  <!-- DELETE -->
-
-                  <button
-                    type="button"
-                    class="bg-transparent border-0 text-danger d-flex align-items-center justify-content-center"
+                    class="bg-transparent border-0 position-absolute top-0 end-0 text-danger p-1"
+                    matTooltip="Delete screenshot"
                     (click)="deleteSavedScreenshot(screenshot)"
-                    title="Delete screenshot"
-                    aria-label="Delete screenshot"
                   >
-
-                    <mat-icon class="delete-icon">
-                      delete
-                    </mat-icon>
-
+                    <mat-icon>delete</mat-icon>
                   </button>
-
                 </div>
-
-
-
+              }
             </div>
-
-          }
-
-        </div>
-
-      </div>
-
-    }
-
-
-    <!-- ========================================= -->
-    <!-- NEW SCREENSHOT PREVIEWS -->
-    <!-- ========================================= -->
-
-    @if (
-      screenshotPreviews().length > 0
-      ) {
-
-      <div class="mt-3">
-
-        <div class="text-grey mb-2">
-
-          <small>
-            &gt; New Screenshots
-          </small>
-
-        </div>
-
-
-        <div
-          class="saved-screenshots d-flex flex-wrap"
+          </div>
+        }
+        <!-- NEW SCREENSHOTS -->
+        @if (screenshotPreviews().length > 0) {
+          <div>
+            <small class="text-muted d-block mb-2">New screenshots</small>
+            <div class="d-flex flex-wrap gap-3">
+              @for (preview of screenshotPreviews(); track $index) {
+                <div class="screenshot-preview position-relative">
+                  <img [src]="preview" alt="Screenshot preview" />
+                  <button
+                    type="button"
+                    class="bg-transparent border-0 position-absolute top-0 end-0 text-danger p-1"
+                    matTooltip="Remove screenshot"
+                    (click)="removeScreenshotToUpload($index)"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        }
+        @if (screenshots().length === 0 && screenshotPreviews().length === 0) {
+          <div class="grey medium">No screenshots attached.</div>
+        }
+      </section>
+      <!--  ACTIONS -->
+      <div class="d-flex justify-content-end gap-2 pt-3">
+        <button
+          type="button"
+          class="btn cancel-button py-1 px-2 small mx-2"
+          [disabled]="saving()"
+          (click)="cancel()"
         >
-
-          @for (
-            preview of screenshotPreviews();
-            track $index
-            ) {
-
-            <div
-              class="screenshot-preview mx-2 position-relative"
-            >
-
-              <img
-                [src]="preview"
-                alt="New trade screenshot"
-              />
-
-             <div class="d-flex align-items-center justify-content-end">
-              <button
-                type="button"
-                class="bg-transparent border-0 negative d-flex align-items-center justify-content-center  p-2"
-                (click)="removeScreenshot($index)"
-                title="Remove screenshot"
-                aria-label="Remove screenshot"
-              >
-
-                <mat-icon>
-                  delete
-                </mat-icon>
-
-              </button>
-
-            </div>
-            </div>
-
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="save-button small py-1 px-2 rounded-2"
+          [disabled]="saving()"
+          (click)="save()"
+        >
+          @if (saving()) {
+            Saving...
+          } @else {
+            Save Evaluation
           }
-
-        </div>
-
+        </button>
       </div>
-
-    }
-
-
-    <!-- ========================================= -->
-    <!-- EMPTY STATE -->
-    <!-- ========================================= -->
-
-    @if (
-      screenshots().length === 0 &&
-      screenshotPreviews().length === 0
-      ) {
-
-      <div
-        class="empty-screenshot text-grey"
-      >
-
-        <mat-icon>
-          image
-        </mat-icon>
-
-        <small>
-          No screenshots saved yet.
-        </small>
-
-      </div>
-
-    }
-
-
-    <!-- ========================================= -->
-    <!-- ADD SCREENSHOT -->
-    <!-- ========================================= -->
-
-    <div
-      class="d-flex align-items-center justify-content-center mt-3"
-    >
-
-      <button
-        type="button"
-        class="screenshot-input d-flex align-items-center justify-content-center col-6 rounded-2 gap-2 px-2 py-1"
-        (click)="screenshotInput.click()"
-      >
-
-        <mat-icon>
-          add_photo_alternate
-        </mat-icon>
-
-        <span>
-          Attach screenshots
-        </span>
-
-      </button>
-
     </div>
-
-  </div>
-
-
-  <!-- ========================================= -->
-  <!-- ACTIONS -->
-  <!-- ========================================= -->
-
-  <div
-    class="row d-flex align-items-center justify-content-center gap-3 mt-3"
-  >
-
-    <button
-      type="button"
-      class="cancel-button col-5 px-2 py-1"
-      (click)="cancel()"
-      [disabled]="saving()"
-    >
-      Cancel
-    </button>
-
-
-    <button
-      type="button"
-      class="save-evaluation-button col-5 py-1 px-2 d-flex align-items-center justify-content-center"
-      (click)="save()"
-      [disabled]="saving()"
-    >
-
-      @if (saving()) {
-
-        <mat-icon class="mx-2">
-          hourglass_top
-        </mat-icon>
-
-        Saving...
-
-      } @else {
-
-        <mat-icon class="mx-2">
-          save
-        </mat-icon>
-
-        Save Evaluation
-
-      }
-
-    </button>
-
-  </div>
-
+  }
 </div>

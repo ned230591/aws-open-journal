@@ -1,15 +1,9 @@
-@use '../../../styles/buttons' as *;
-@use '../../../styles/typography' as *;
-@use '../../../styles/backgrounds' as *;
 .calendar-card {
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: visible;
   min-width: 500px;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
-  scrollbar-color:
-    rgba(0, 230, 118, 0.35)
-    rgba(255, 255, 255, 0.04);
+  scrollbar-color: rgba(0, 230, 118, 0.35) rgba(255, 255, 255, 0.04);
 }
 .calendar-card::-webkit-scrollbar {
   height: 6px;
@@ -19,7 +13,7 @@
   border-radius: 10px;
 }
 .calendar-card::-webkit-scrollbar-thumb {
-  background: rgba(0, 230, 118, 0.30);
+  background: rgba(0, 230, 118, 0.3);
   border-radius: 10px;
 }
 .calendar-card::-webkit-scrollbar-thumb:hover {
@@ -59,10 +53,10 @@
   grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 .week-day {
-  padding:4px ;
+  padding: 4px;
   min-width: 0;
   color: #acafae;
-  font-size: 0.75rem;
+  font-size: var(--fs-2xs);
   font-weight: 600;
   text-align: center;
   text-transform: uppercase;
@@ -91,7 +85,7 @@
 }
 .day-number {
   color: #aebbb6;
-  font-size: 0.82rem;
+  font-size: var(--fs-xs);
   font-weight: 700;
   line-height: 1;
   white-space: nowrap;
@@ -100,7 +94,7 @@
   display: block;
   margin-top: 20px;
   color: #dbe5e1;
-  font-size: 0.78rem;
+  font-size: var(--fs-xs);
   font-weight: 700;
   line-height: 1.1;
   white-space: nowrap;
@@ -120,7 +114,7 @@
 .no-trades {
   margin-top: 21px;
   color: #3d4945;
-  font-size: 0.85rem;
+  font-size: var(--fs-xs);
   white-space: nowrap;
 }
 .calendar-day.other-month {
@@ -143,7 +137,7 @@
   background: #ebecd2;
 }
 .calendar-day.best-day {
-  border:2px solid  rgba(0, 230, 118, 0.75);
+  border: 2px solid rgba(0, 230, 118, 0.75);
   background: rgba(174, 244, 174, 0.27);
 }
 .calendar-day.best-day::before {
@@ -156,7 +150,7 @@
   border-radius: 3px;
   color: #00e676;
   background: rgba(0, 230, 118, 0.08);
-  font-size: 0.75rem;
+  font-size: var(--fs-2xs);
   font-weight: 800;
   line-height: 1;
   letter-spacing: 0.06em;
@@ -175,11 +169,10 @@
   border-radius: 3px;
   color: #ff5252;
   background: rgba(255, 82, 82, 0.08);
-  font-size: 0.75rem;
+  font-size: var(--fs-2xs);
   font-weight: 800;
   line-height: 1;
   letter-spacing: 0.06em;
-
 }
 .calendar-day:nth-child(7n),
 .calendar-day:nth-child(7n - 1) {
@@ -187,39 +180,19 @@
 }
 .calendar-day.profit-light-bg:nth-child(7n),
 .calendar-day.profit-light-bg:nth-child(7n - 1) {
-  background:
-    linear-gradient(
-        145deg,
-        rgba(0, 230, 118, 0.12),
-        rgba(0, 230, 118, 0.04)
-    );
+  background: linear-gradient(145deg, rgba(0, 230, 118, 0.12), rgba(0, 230, 118, 0.04));
 }
 .calendar-day.loss:nth-child(7n),
 .calendar-day.loss:nth-child(7n - 1) {
-  background:
-    linear-gradient(
-        145deg,
-        rgba(255, 82, 82, 0.11),
-        rgba(255, 82, 82, 0.035)
-    );
+  background: linear-gradient(145deg, rgba(255, 82, 82, 0.11), rgba(255, 82, 82, 0.035));
 }
 .calendar-day.best-day:nth-child(7n),
 .calendar-day.best-day:nth-child(7n - 1) {
-  background:
-    linear-gradient(
-        145deg,
-        rgba(0, 230, 118, 0.20),
-        rgba(0, 230, 118, 0.055)
-    );
+  background: linear-gradient(145deg, rgba(0, 230, 118, 0.2), rgba(0, 230, 118, 0.055));
 }
 .calendar-day.worst-day:nth-child(7n),
 .calendar-day.worst-day:nth-child(7n - 1) {
-  background:
-    linear-gradient(
-        145deg,
-        rgba(255, 82, 82, 0.18),
-        rgba(255, 82, 82, 0.045)
-    );
+  background: linear-gradient(145deg, rgba(255, 82, 82, 0.18), rgba(255, 82, 82, 0.045));
 }
 .legend-dot {
   width: 8px;
@@ -227,52 +200,23 @@
   flex: 0 0 auto;
   border-radius: 50%;
 }
-/**calendar scroll **/
-.calendar-card {
-  min-width: 0;
-  overflow: visible;
+
+.monthly-stat-label {
+  color: #acafae;
+  font-size: var(--fs-2xs);
 }
-.calendar-scroll {
-  width: 100%;
-  min-width: 0;
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color:
-    rgba(0, 230, 118, 0.35)
-    rgba(255, 255, 255, 0.04);
+.monthly-stat-value {
+  font-weight: 700;
+  font-size: var(--fs-sm);
 }
-.calendar-scroll::-webkit-scrollbar {
-  height: 6px;
-}
-.calendar-scroll::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.035);
-  border-radius: 10px;
-}
-.calendar-scroll::-webkit-scrollbar-thumb {
-  background: rgba(0, 230, 118, 0.30);
-  border-radius: 10px;
-}
-.calendar-scroll::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 230, 118, 0.55);
-}
+
+/* The grid has a fixed min-width and scrolls horizontally below that
+   (see .calendar-scroll), so it never actually needs smaller text to
+   "fit" a narrow screen — only layout (spacing/sizing), never font-size,
+   changes at these breakpoints. */
 .week-header,
 .calendar-grid {
   min-width: 650px;
-}
-.week-header {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-}
-.calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 6px;
-  box-sizing: border-box;
-}
-.calendar-day {
-  min-width: 0;
 }
 
 @media (max-width: 768px) {
@@ -283,21 +227,16 @@
   }
   .day-pnl {
     margin-top: 14px;
-    font-size: 0.62rem;
-  }
-  .week-day {
-    font-size: 0.55rem;
   }
   .calendar-day.best-day::before,
   .calendar-day.worst-day::before {
     top: 5px;
     right: 5px;
     padding: 2px 4px;
-    font-size: 0.50rem;
   }
 }
 @media (max-width: 480px) {
-  .calendar-summary-pnl{
+  .calendar-summary-pnl {
     position: relative;
   }
   .month-picker {
@@ -305,13 +244,11 @@
     min-width: 120px;
   }
 
-
   .calendar-day.best-day::before,
   .calendar-day.worst-day::before {
     top: 4px;
     right: 4px;
     padding: 2px 3px;
-    font-size: 0.34rem;
   }
   .calendar-day.today.best-day::after,
   .calendar-day.today.worst-day::after {
@@ -326,35 +263,19 @@
     min-height: 62px;
     padding: 7px;
   }
-  .day-number {
-    font-size: 0.54rem;
-  }
   .day-pnl {
     margin-top: 10px;
-    font-size: 0.68rem;
   }
   .no-trades {
     margin-top: 10px;
-    font-size: 0.55rem;
   }
   .week-day {
-    font-size: 0.48rem;
     letter-spacing: 0.04em;
   }
-
-  .monthly-stat-label {
-    font-size: 0.42rem;
-  }
-  .monthly-stat-value {
-    font-size: 0.60rem;
-  }
-
   .calendar-day.best-day::before,
   .calendar-day.worst-day::before {
     top: 3px;
     right: 3px;
     padding: 1px 3px;
-    font-size: 0.30rem;
   }
 }
-

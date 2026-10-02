@@ -1,0 +1,400 @@
+<div class="playbook-page page-container m-4 p-2">
+  <div class="p-0">
+    @switch (mode) {
+      <!----------------------------------------  LIST---------------------------------------------------------------- -->
+      @case ('LIST') {
+        <!--  HEADER -->
+        <div class="d-flex align-items-center p-4">
+          <div><i class="bi bi-journal-bookmark header-icon"></i></div>
+          <div>
+            <div class="row col-11 p-0 m-0 title mx-4 mt-4">PLAYBOOKS</div>
+            <p class="subtitle mx-4 mb-4">Trading strategies and historical performance</p>
+          </div>
+        </div>
+
+        <!---list--->
+        <div class="div-card">
+          <div class="d-flex justify-content-end m-3">
+            <button
+              type="button"
+              class="light-blue-bg rounded-2 small mx-2 text-info px-2 py-1"
+              (click)="toggleComparator()"
+            >
+              <i class="bi bi-bar-chart-line text-info fw-bold fs-6 mx-2"></i>PLAYBOOK COMPARATOR
+            </button>
+
+            <button
+              type="button"
+              class="light-blue-bg rounded-2 small text-info px-2 py-1"
+              (click)="showCreate()"
+            >
+              <span class="text-success fw-bold fs-6 mx-2">+</span>CREATE PLAYBOOK
+            </button>
+          </div>
+
+          <!-- ERROR -->
+          @if (errorMessage) {
+            <div class="p-2 negative error-bg m-2 rounded-2">[!] {{ errorMessage }}</div>
+          }
+          <!-- LOADING -->
+          @if (loading()) {
+            <div class="loading positive text-center light-blue-bg p-2 rounded-2">
+              <span class="text-info">[SYSTEM] </span> Loading playbooks
+            </div>
+          }
+          <!-- EMPTY -->
+          @if (!loading() && totalElements === 0) {
+            <div class="p-4 rounded-2 light-blue-bg">
+              <div class="medium grey text-center">
+                <span class="muted">[EMPTY] </span>NO PLAYBOOKS FOUND
+              </div>
+              <div class="medium light-text text-center">Create your first trading playbook.</div>
+            </div>
+          }
+
+          <!--  DESKTOP TABLE -->
+          @if (!loading() && playbooks.length > 0) {
+            <div class="d-flex align-items-center justify-content-center">
+              <div class="w-100 desktop-table">
+                <table class="table p-0 m-0">
+                  <thead>
+                    <tr>
+                      <th class="sortable" (click)="sortBy('id')">
+                        ID
+                        @if (sortColumn === 'id') {
+                          <span class="sort-icon"> {{ sortDirection === 'asc' ? '↑' : '↓' }} </span>
+                        }
+                      </th>
+
+                      <th class="sortable" (click)="sortBy('strategy')">
+                        STRATEGY
+                        @if (sortColumn === 'strategy') {
+                          <span class="sort-icon"> {{ sortDirection === 'asc' ? '↑' : '↓' }} </span>
+                        }
+                      </th>
+                      <th>TYPE</th>
+                      <th>TIMEFRAME</th>
+                      <th class="sortable" (click)="sortBy('status')">
+                        STATUS
+                        @if (sortColumn === 'status') {
+                          <span class="sort-icon"> {{ sortDirection === 'asc' ? '↑' : '↓' }} </span>
+                        }
+                      </th>
+                      <th class="sortable" (click)="sortBy('createdAt')">
+                        CREATED
+                        @if (sortColumn === 'createdAt') {
+                          <span class="sort-icon"> {{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                        }
+                      </th>
+                      <th></th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    @for (playbook of playbooks; track playbook.id) {
+                      <tr>
+                        <td>{{ playbook.id }}</td>
+                        <td>
+                          <span> {{ playbook.strategy }}</span>
+                          @if (playbook.systemDefined) {
+                            <span class="small text-info ms-2"> DEFAULT</span>
+                          }
+                        </td>
+                        <td>{{ playbook.tradingType }}</td>
+                        <td>{{ playbook.timeframe }}</td>
+                        <td>
+                          @if (playbook.active) {
+                            <div
+                              class="light-green-transparent-border positive p-1 small text-center"
+                            >
+                              ACTIVE
+                            </div>
+                          } @else {
+                            <div class="border-secondary p-1 small text-center muted">ARCHIVED</div>
+                          }
+                        </td>
+                        <td class="date">{{ playbook.createdAt | date: 'yyyy-MM-dd' }}</td>
+                        <td (click)="$event.stopPropagation()">
+                          <div>
+                            <!-- ANALYZE -->
+                            <button
+                              type="button"
+                              class="bg-transparent border-0 text-info p-2 xsmall-button"
+                              title="Analyze playbook"
+                              (click)="analyze(playbook)"
+                            >
+                              <i class="bi bi-bar-chart-line"></i>
+                            </button>
+                            <!-- EDIT -->
+                            <button
+                              type="button"
+                              class="bg-transparent border-0 text-info p-2"
+                              title="Edit playbook"
+                              [disabled]="playbook.systemDefined"
+                              (click)="showEdit(playbook)"
+                            >
+                              <i class="bi bi-pencil-square"></i>
+                            </button>
+                            <!-- DELETE -->
+                            <button
+                              type="button"
+                              class="bg-transparent border-0 text-danger p-2"
+                              title="Delete playbook"
+                              [disabled]="playbook.systemDefined"
+                              (click)="delete(playbook)"
+                            >
+                              <i class="bi bi-trash"></i>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+
+                      <!--  DESKTOP ANALYSIS -->
+                      @if (analyzedPlaybookId() === playbook.id) {
+                        <tr>
+                          <td colspan="7" class="p-0">
+                            <div class="p-4">
+                              <!-- HEADER -->
+                              <div class="d-flex align-items-center justify-content-between mb-4">
+                                <div>
+                                  <div class="text-info fw-bold">
+                                    <i class="bi bi-journal-bookmark fw-bold fs-6"></i>
+                                    {{ playbook.strategy | uppercase }}
+                                  </div>
+                                </div>
+                                <button
+                                  type="button"
+                                  class="bg-transparent border-0 blue fw-bold"
+                                  (click)="closeAnalysis()"
+                                >
+                                  <i class="bi bi-chevron-up"></i>
+                                </button>
+                              </div>
+
+                              <!-- LOADING -->
+                              @if (analysisLoading()) {
+                                <div
+                                  class="loading p-2 light-blue-bg m-2 rounded-2 text-center text-info"
+                                >
+                                  Loading analysis...
+                                </div>
+                              }
+                              <!-- ERROR -->
+                              @if (!analysisLoading() && analysisError) {
+                                <div class="p-2 negative error-bg m-2 rounded-2">
+                                  [!] {{ analysisError }}
+                                </div>
+                              }
+                              <!-- DATA -->
+
+                              @if (!analysisLoading() && !analysisError && playbookAnalysis()) {
+                                <div class="row dark-green-bg py-4 gap-2">
+                                  <app-playbook-performance-grid
+                                    [performance]="playbookAnalysis()!"
+                                  ></app-playbook-performance-grid>
+                                </div>
+                              }
+                              <!-- NO DATA -->
+                              @if (!analysisLoading() && !analysisError && !playbookAnalysis()) {
+                                <div class="medium p-4 border border-secondary rounded-2 m-2">
+                                  <div class="medium fw-bold">
+                                    <span class="grey">[EMPTY]</span>NO PERFORMANCE DATA
+                                  </div>
+                                  <div class="small grey">
+                                    No trades are currently assigned to this playbook.
+                                  </div>
+                                </div>
+                              }
+                            </div>
+                          </td>
+                        </tr>
+                      }
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!--  MOBILE TABLE-->
+            <div class="mobile-table">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th class="sortable" (click)="sortBy('strategy')">
+                      STRATEGY
+                      @if (sortColumn === 'strategy') {
+                        <span class="sort-icon">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
+                      }
+                    </th>
+                    <th>ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (playbook of playbooks; track playbook.id; let i = $index) {
+                    <tr (click)="togglePlaybook(i)">
+                      <td>
+                        <span>{{ playbook.strategy }}</span>
+                      </td>
+                      <td>
+                        <div class="d-flex align-items-center justify-content-end">
+                          <!-- ANALYZE -->
+                          <button
+                            type="button"
+                            class="bg-transparent border-0 text-info fw-bold"
+                            title="Analyze"
+                            (click)="$event.stopPropagation(); analyze(playbook)"
+                          >
+                            <i class="bi bi-bar-chart-line"></i>
+                          </button>
+                          <!-- EDIT -->
+                          <button
+                            type="button"
+                            class="bg-transparent border-0 text-info fw-bold"
+                            title="Edit"
+                            [disabled]="playbook.systemDefined"
+                            (click)="$event.stopPropagation(); showEdit(playbook)"
+                          >
+                            <i class="bi bi-pencil-square"></i>
+                          </button>
+                          <!-- DELETE -->
+                          <button
+                            type="button"
+                            class="bg-transparent border-0 text-danger fw-bold"
+                            title="Delete"
+                            [disabled]="playbook.systemDefined"
+                            (click)="$event.stopPropagation(); delete(playbook)"
+                          >
+                            <i class="bi bi-trash"></i>
+                          </button>
+                          <!-- EXPAND -->
+                          <button type="button" class="bg-transparent border-0 text-info fw-bold">
+                            @if (expandedPlaybook() === i) {
+                              <i class="bi bi-chevron-up toggle-icon mt-2"></i>
+                            } @else {
+                              <i class="bi bi-chevron-down toggle-icon mt-2"></i>
+                            }
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <!-- MOBILE DETAILS -->
+                    @if (expandedPlaybook() === i) {
+                      <tr class="trade-details">
+                        <td colspan="2">
+                          <div class="row col-12 details-grid w-100">
+                            <div class="detail-item">
+                              <span class="text-info fw-bold small">&gt; ID</span>
+                              <span> {{ playbook.id }} </span>
+                            </div>
+
+                            <div class="detail-item">
+                              <span class="text-info fw-bold small">&gt; TYPE</span>
+                              <span>{{ playbook.tradingType }}</span>
+                            </div>
+                            <div class="detail-item">
+                              <span class="text-info fw-bold small">&gt; TIMEFRAME</span>
+                              <span>{{ playbook.timeframe }}</span>
+                            </div>
+
+                            <div class="detail-item">
+                              <span class="text-info fw-bold small">&gt; STATUS</span>
+                              @if (playbook.active) {
+                                <span class="status positive">
+                                  <i class="bi bi-circle-fill"></i>ACTIVE</span
+                                >
+                              } @else {
+                                <span class="status archived">
+                                  <i class="bi bi-circle-fill"></i>ARCHIVED</span
+                                >
+                              }
+                            </div>
+
+                            <div class="detail-item">
+                              <span class="text-info fw-bold small">&gt; CREATED</span>
+                              <span class="date">{{
+                                playbook.createdAt | date: 'yyyy-MM-dd'
+                              }}</span>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    }
+
+                    <!-- MOBILE ANALYSIS -->
+                    @if (analyzedPlaybookId() === playbook.id) {
+                      <tr>
+                        <td colspan="2" class="p-0">
+                          <div class="p-3">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                              <div class="text-info fw-bold">
+                                <i class="bi bi-journal-bookmark"></i>
+                                {{ playbook.strategy | uppercase }}
+                              </div>
+                              <button
+                                type="button"
+                                class="bg-transparent border-0 text-danger"
+                                (click)="closeAnalysis()"
+                              >
+                                <i class="bi bi-x fs-5 fw-bold"></i>
+                              </button>
+                            </div>
+                            @if (analysisLoading()) {
+                              <div class="loading">Loading analysis...</div>
+                            }
+                            @if (!analysisLoading() && analysisError) {
+                              <div class="error">{{ analysisError }}</div>
+                            }
+                            @if (!analysisLoading() && !analysisError && playbookAnalysis()) {
+                              <div class="analysis-grid dark-green-bg p-4 gap-4">
+                                <app-playbook-performance-grid
+                                  [performance]="playbookAnalysis()!"
+                                ></app-playbook-performance-grid>
+                              </div>
+                            }
+                            @if (!analysisLoading() && !analysisError && !playbookAnalysis()) {
+                              <div class="small p-3 rounded-2 border-secondary">
+                                <div>
+                                  <span class="grey fw-bold">[EMPTY]</span>NO PERFORMANCE DATA
+                                </div>
+                                <div>No trades are currently assigned to this playbook.</div>
+                              </div>
+                            }
+                          </div>
+                        </td>
+                      </tr>
+                    }
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <!-- PAGINATION-->
+            <app-pagination
+              [currentPage]="currentPage"
+              [totalPages]="totalPages"
+              [disabled]="loading()"
+              [(pageInput)]="pageInput"
+              (previous)="previousPage()"
+              (next)="nextPage()"
+              (go)="goToPage()"
+            ></app-pagination>
+            <!--COMPARATOR -->
+            @if (comparatorOpen()) {
+              <app-playbook-comparator
+                (closed)="comparatorOpen.set(false)"
+              ></app-playbook-comparator>
+            }
+          }
+        </div>
+      }
+      <!---------------------------------- EDIT/CREATE   FORM ------------------------------------------>
+      @case ('FORM') {
+        <app-playbook-form
+          [playbookToEdit]="editingPlaybook"
+          (saved)="onFormSaved()"
+          (cancelled)="onFormCancelled()"
+        ></app-playbook-form>
+      }
+    }
+  </div>
+</div>

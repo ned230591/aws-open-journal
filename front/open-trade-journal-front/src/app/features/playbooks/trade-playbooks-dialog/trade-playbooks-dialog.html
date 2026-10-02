@@ -1,0 +1,64 @@
+<div class="dialog">
+  <div class="">
+    <div class="p-4">
+      <div class="title fs-5">Attach Playbooks</div>
+      <div class="subtitle fs-6">
+        {{ data.trade.symbol }} ·
+        {{ data.trade.buySell }}
+      </div>
+    </div>
+    <button
+      type="button"
+      class="close-button position-absolute top-0 end-0 p-2 m-2 negative fw-bold bg-transparent border-0"
+      (click)="cancel()"
+      aria-label="Close"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <!-- CONTENT -->
+  <div class="p-4 light-blue-bg m-4 rounded-2">
+    @if (loading()) {
+      <div class="loading text-info light-blue-bg rounded-2 p-3 m-4 text-center">
+        Loading playbooks...
+      </div>
+    } @else if (playbooks.length === 0) {
+      <div
+        class="light-blue-bg p-4 grey d-flex align-items-center justify-content-center m-2 rounded-2"
+      >
+        <mat-icon class="mx-2 text-info">menu_book</mat-icon>
+        <span>No playbooks available.</span>
+      </div>
+    } @else {
+      <div class="grey m-2">
+        <span>Select the playbooks that apply to this trade.</span><br />
+        <strong class="text-info small text-uppercase">
+          [{{ selectedPlaybookIds().size }} selected ]</strong
+        >
+      </div>
+      <div class="playbook-list">
+        @for (playbook of playbooks; track playbook.id) {
+          <div
+            class="playbook-option light-blue-bg d-flex align-items-center m-2 rounded-2 w-auto"
+            [class.selected]="isSelected(playbook.id)"
+          >
+            <mat-checkbox
+              [checked]="isSelected(playbook.id)"
+              (change)="togglePlaybook(playbook.id)"
+            ></mat-checkbox>
+            @if (playbook.strategy) {
+              <div class="grey small">{{ playbook.strategy }}</div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+  <!-- ACTIONS -->
+  <div class="p-4 d-flex align-items-center justify-content-end gap-3">
+    <button type="button" class="cancel-button rounded-2 p-2" (click)="cancel()">Cancel</button>
+    <button type="button" class="save-button rounded-2 p-2" (click)="save()" [disabled]="loading()">
+      Save Playbooks
+    </button>
+  </div>
+</div>

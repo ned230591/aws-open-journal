@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="keycloak-brevo-provider-0.0.1-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/brevo/target/keycloak-brevo-provider-0.0.1-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

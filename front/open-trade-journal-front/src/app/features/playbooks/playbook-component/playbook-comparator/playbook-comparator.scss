@@ -1,0 +1,33 @@
+.comparator-playbook.selected {
+  border-color: rgba(0, 217, 255, 0.65);
+  background: rgba(0, 217, 255, 0.06);
+  color: #00d9ff;
+}
+.comparator-playbook input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.comparator-checkbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  border: 1px solid #454c54;
+  background: #0d1117;
+  box-sizing: border-box;
+}
+.comparator-playbook.selected.comparator-checkbox {
+  border-color: #00d9ff;
+  background: #00d9ff;
+}
+.comparator-playbook.selected.comparator-checkbox::after {
+  content: '✓';
+  color: #0d1117;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+}

@@ -1,0 +1,45 @@
+@if (totalPages() > 0) {
+  <div class="pagination-container d-flex align-items-center justify-content-center gap-4 p-4">
+    <!-- PREVIOUS -->
+    <button
+      type="button"
+      class="pagination-button rounded-2"
+      (click)="previous.emit()"
+      [disabled]="currentPage() === 0 || disabled()"
+    >
+      Previous
+    </button>
+
+    <!-- PAGE SELECTOR -->
+    <div class="page-selector p-2 gap-2 w-100 d-flex align-items-center justify-content-center">
+      <span class="mx-2">Page</span>
+      <input
+        type="number"
+        min="1"
+        [max]="totalPages()"
+        [value]="pageInput()"
+        (input)="onPageInputChange($any($event.target).valueAsNumber)"
+        (keyup.enter)="go.emit()"
+      />
+      <span>of {{ totalPages() }}</span>
+      <button
+        type="button"
+        class="go-page-button rounded-2 p-2"
+        (click)="go.emit()"
+        [disabled]="disabled()"
+      >
+        Go
+      </button>
+    </div>
+
+    <!-- NEXT -->
+    <button
+      type="button"
+      class="pagination-button rounded-2"
+      (click)="next.emit()"
+      [disabled]="currentPage() >= totalPages() - 1 || disabled()"
+    >
+      Next
+    </button>
+  </div>
+}

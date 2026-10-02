@@ -1,9 +1,3 @@
-@use '../../../styles/typography' as *;
-@use '../../../styles/backgrounds' as *;
-
-.histogram-container {
-  background: #050805;
-}
 .histogram-scroll {
   width: 100%;
   overflow-x: auto;
@@ -11,17 +5,15 @@
   display: block;
   background:
     repeating-linear-gradient(
-        0deg,
-        rgba(0, 255, 102, 0.025) 0px,
-        rgba(0, 255, 102, 0.025) 1px,
-        transparent 1px,
-        transparent 4px
+      0deg,
+      rgba(0, 255, 102, 0.025) 0px,
+      rgba(0, 255, 102, 0.025) 1px,
+      transparent 1px,
+      transparent 4px
     ),
     #050805;
   scrollbar-width: auto;
-  scrollbar-color:
-    #176b31
-    #020402;
+  scrollbar-color: #176b31 #020402;
 }
 .histogram-scroll::-webkit-scrollbar {
   height: 10px;
@@ -39,36 +31,21 @@
 .histogram-scroll::-webkit-scrollbar-thumb:hover {
   background: #00ff66;
 }
-.chart {
-  min-height: 430px;
-  background: transparent;
-}
-
-.terminal-total.profit {
-  color: #00ff66;
-}
-.terminal-total.loss {
-  color: #ff3333;
-}
-
-
 .timeframe-btn {
-background-color: rgba(246, 243, 243, 0.07);
-  border:1px solid rgba(218, 216, 216, 0.38);
+  background-color: rgba(246, 243, 243, 0.07);
+  border: 1px solid rgba(218, 216, 216, 0.38);
   color: rgb(209, 208, 208);
-
 }
-
 .timeframe-btn:hover {
   background-color: rgba(246, 243, 243, 0.15);
-  border:1px solid rgba(218, 216, 216, 0.47);
+  border: 1px solid rgba(218, 216, 216, 0.47);
   color: rgb(209, 208, 208);
   transform: scale(1.07);
 }
- .timeframe-btn-active{
-  background-color: rgba(243, 239, 239, 0.13);
-  border:1px solid rgba(220, 228, 223, 0.86);
-  color: rgb(197, 205, 209);
-   font-size: medium;
-   font-weight: 600;
+.timeframe-btn-active {
+  background-color: #256d417a;
+  border: 1px solid #00ff6670;
+  color: #20cb78;
+  font-size: medium;
+  font-weight: 600;
 }

@@ -1,0 +1,178 @@
+.vwap-container {
+  width: 100%;
+  padding: 24px 28px;
+  box-sizing: border-box;
+  color: #e8edf2;
+}
+
+/* =========================
+   Toolbar
+   ========================= */
+
+.toolbar {
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.field label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #9ba7b4;
+}
+
+.field input {
+  width: 190px;
+  height: 38px;
+  padding: 0 11px;
+
+  box-sizing: border-box;
+
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 4px;
+
+  background: rgba(255, 255, 255, 0.06);
+  color: #f1f5f9;
+
+  font-size: 14px;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.field input:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.field input:focus {
+  outline: none;
+  border-color: rgba(76, 175, 80, 0.8);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Date picker icon */
+
+.field input[type='date']::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+/* =========================
+   Load button
+   ========================= */
+
+button {
+  height: 38px;
+  padding: 0 20px;
+
+  border: 1px solid rgba(76, 175, 80, 0.5);
+  border-radius: 4px;
+
+  background: rgba(76, 175, 80, 0.15);
+  color: #9be7a0;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.1s ease;
+}
+
+button:hover:not(:disabled) {
+  background: rgba(76, 175, 80, 0.25);
+  border-color: rgba(76, 175, 80, 0.8);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =========================
+   Error
+   ========================= */
+
+.error {
+  margin-bottom: 18px;
+  padding: 10px 14px;
+
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 4px;
+
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+
+  font-size: 13px;
+}
+
+/* =========================
+   Chart
+   ========================= */
+
+.chart-wrapper {
+  position: relative;
+
+  width: 100%;
+  height: 600px;
+
+  padding: 18px;
+
+  box-sizing: border-box;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.echarts-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+/* =========================
+   Responsive
+   ========================= */
+
+@media (max-width: 768px) {
+  .vwap-container {
+    padding: 18px;
+  }
+
+  .toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .field input {
+    width: 100%;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  .chart-wrapper {
+    height: 500px;
+    padding: 10px;
+  }
+}

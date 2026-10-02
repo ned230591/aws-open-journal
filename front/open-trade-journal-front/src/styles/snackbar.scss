@@ -1,0 +1,14 @@
+.success-snackbar .mdc-snackbar__surface {
+  background-color: rgb(44 178 85 / 80%) !important;
+}
+.error-snackbar .mdc-snackbar__surface {
+  background-color: rgb(205 15 15 / 77%) !important;
+}
+.success-snackbar .mdc-snackbar__label,
+.error-snackbar .mdc-snackbar__label {
+  color: white !important;
+  font-weight: bold;
+}
+.mat-mdc-simple-snack-bar buuton {
+  color: white !important;
+}

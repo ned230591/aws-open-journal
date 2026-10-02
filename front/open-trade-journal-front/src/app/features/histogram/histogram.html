@@ -1,11 +1,9 @@
-<div class="histogram-container p-4">
-
+<div class="p-4">
   <!-- TERMINAL HEADER -->
   <div class="terminal-header mb-3 py-4 px-0">
-
     <div class="row col-12 align-items-center">
-
-      <div class="col-7 terminal-title"> > {{
+      <div class="col-7 terminal-title">
+        {{
           selectedTimeframe === 'day'
             ? 'Daily'
             : selectedTimeframe === 'week'
@@ -13,18 +11,15 @@
               : selectedTimeframe === 'month'
                 ? 'Monthly'
                 : 'Yearly'
-        }} P&L history
-
-
+        }}
+        P&L history
       </div>
 
       <div class="col-12 col-xl-5 d-flex justify-content-end my-4 my-md-1">
-
-        <div >
-
+        <div>
           <button
             type="button"
-            class="timeframe-btn  px-2 py-1"
+            class="timeframe-btn px-2 py-1"
             [class.timeframe-btn-active]="selectedTimeframe === 'day'"
             (click)="setTimeframe('day')"
           >
@@ -33,7 +28,7 @@
 
           <button
             type="button"
-            class="timeframe-btn  px-2 py-1"
+            class="timeframe-btn px-2 py-1"
             [class.timeframe-btn-active]="selectedTimeframe === 'week'"
             (click)="setTimeframe('week')"
           >
@@ -42,7 +37,7 @@
 
           <button
             type="button"
-            class="timeframe-btn  px-2 py-1"
+            class="timeframe-btn px-2 py-1"
             [class.timeframe-btn-active]="selectedTimeframe === 'month'"
             (click)="setTimeframe('month')"
           >
@@ -57,27 +52,19 @@
           >
             YEAR
           </button>
-
         </div>
-
       </div>
-
     </div>
-
   </div>
-
 
   <!-- HISTOGRAM -->
   <div class="histogram-scroll col-12">
-
     <div
       echarts
       [options]="chartOptions"
       class="chart col-12"
       [style.min-width.px]="chartWidth"
-      style="height: 430px;"
+      style="height: 430px"
     ></div>
-
   </div>
-
 </div>

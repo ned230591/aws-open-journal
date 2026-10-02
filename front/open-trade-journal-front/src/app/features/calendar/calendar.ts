@@ -1,25 +1,29 @@
-import {Component, OnInit, inject, signal, computed} from '@angular/core';
-import {CurrencyPipe, DatePipe, DecimalPipe} from '@angular/common';
-import {MatDatepicker, MatDatepickerModule} from '@angular/material/datepicker';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+  signal,
+  computed,
+} from '@angular/core';
+import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
+import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
 import { MatNativeDateModule } from '@angular/material/core';
 import { TradesService } from '../../core/services/trades.service';
 import { Trade } from '../../core/models/trade.model';
 import { PnlPoint } from '../../core/models/pnl-point.model';
+import { formatDateKey } from '../../core/utils/date-utils';
+import { logger } from '../../core/utils/logger';
 
 @Component({
   selector: 'app-trading-calendar',
   standalone: true,
-  imports: [
-    CurrencyPipe,
-    DecimalPipe,
-    MatIconModule,
-    MatDatepickerModule,
-    MatNativeDateModule
-  ],
+  imports: [CurrencyPipe, DecimalPipe, MatIconModule, MatDatepickerModule, MatNativeDateModule],
 
   templateUrl: './calendar.html',
-  styleUrl: './calendar.scss'
+  styleUrl: './calendar.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Calendar implements OnInit {
   private readonly tradesService = inject(TradesService);
@@ -31,56 +35,50 @@ export class Calendar implements OnInit {
   readonly losingDays = signal(0);
   readonly monthTrades = signal<Trade[]>([]);
   readonly monthLabel = computed(() =>
-    this.currentMonth().toLocaleDateString(
-      'en-US',
-      {
-        month: 'long',
-        year: 'numeric'
-      }
-    )
+    this.currentMonth().toLocaleDateString('en-US', {
+      month: 'long',
+      year: 'numeric',
+    }),
   );
   readonly bestTrade = computed(() => {
     const trades = this.monthTrades();
     const winningPnls = trades
-        .map(trade => Number(trade.fifoPnlRealized))
-        .filter(pnl => Number.isFinite(pnl) && pnl > 0);
+      .map((trade) => Number(trade.fifoPnlRealized))
+      .filter((pnl) => Number.isFinite(pnl) && pnl > 0);
     if (winningPnls.length === 0) {
       return 0;
     }
-    return Math.max(
-      ...winningPnls
-    );
+    return Math.max(...winningPnls);
   });
   readonly worstTrade = computed(() => {
     const trades = this.monthTrades();
     const losingPnls = trades
-        .map(trade => Number(trade.fifoPnlRealized))
-        .filter(pnl => Number.isFinite(pnl) && pnl < 0);
+      .map((trade) => Number(trade.fifoPnlRealized))
+      .filter((pnl) => Number.isFinite(pnl) && pnl < 0);
     if (losingPnls.length === 0) {
       return 0;
     }
-    return Math.min(
-      ...losingPnls
-    );
+    return Math.min(...losingPnls);
   });
   readonly totalWin = computed(() => {
     return this.monthTrades()
-      .map(trade => Number(trade.fifoPnlRealized))
-      .filter(pnl => Number.isFinite(pnl) && pnl > 0)
+      .map((trade) => Number(trade.fifoPnlRealized))
+      .filter((pnl) => Number.isFinite(pnl) && pnl > 0)
       .reduce((total, pnl) => total + pnl, 0);
   });
   readonly totalLoss = computed(() => {
-    return this.monthTrades().map(trade => Number(trade.fifoPnlRealized))
-      .filter(pnl => Number.isFinite(pnl) && pnl < 0)
+    return this.monthTrades()
+      .map((trade) => Number(trade.fifoPnlRealized))
+      .filter((pnl) => Number.isFinite(pnl) && pnl < 0)
       .reduce((total, pnl) => total + pnl, 0);
   });
   readonly winRate = computed(() => {
     const trades = this.monthTrades();
-    const validTrades = trades.filter(trade => Number.isFinite(Number(trade.fifoPnlRealized)));
+    const validTrades = trades.filter((trade) => Number.isFinite(Number(trade.fifoPnlRealized)));
     if (validTrades.length === 0) {
       return 0;
     }
-    const winningTrades = validTrades.filter(trade => Number(trade.fifoPnlRealized) > 0).length;
+    const winningTrades = validTrades.filter((trade) => Number(trade.fifoPnlRealized) > 0).length;
     return (winningTrades / validTrades.length) * 100;
   });
   readonly bestDay = computed(() => {
@@ -89,11 +87,11 @@ export class Calendar implements OnInit {
     if (pnlByDate.length === 0) {
       return null;
     }
-    const profitableDays = pnlByDate.filter(item => item.pnl > 0);
+    const profitableDays = pnlByDate.filter((item) => item.pnl > 0);
     if (profitableDays.length === 0) {
       return null;
     }
-    return profitableDays.reduce((best, current) => current.pnl > best.pnl ? current : best);
+    return profitableDays.reduce((best, current) => (current.pnl > best.pnl ? current : best));
   });
   readonly worstDay = computed(() => {
     const trades = this.monthTrades();
@@ -101,11 +99,11 @@ export class Calendar implements OnInit {
     if (pnlByDate.length === 0) {
       return null;
     }
-    const losingDays = pnlByDate.filter(item => item.pnl < 0);
+    const losingDays = pnlByDate.filter((item) => item.pnl < 0);
     if (losingDays.length === 0) {
       return null;
     }
-    return losingDays.reduce((worst, current) => current.pnl < worst.pnl ? current : worst);
+    return losingDays.reduce((worst, current) => (current.pnl < worst.pnl ? current : worst));
   });
   readonly weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   ngOnInit(): void {
@@ -117,7 +115,8 @@ export class Calendar implements OnInit {
     this.loadMonth();
   }
   nextMonth(): void {
-    const current = this.currentMonth();this.currentMonth.set(new Date(current.getFullYear(), current.getMonth() + 1, 1));
+    const current = this.currentMonth();
+    this.currentMonth.set(new Date(current.getFullYear(), current.getMonth() + 1, 1));
     this.loadMonth();
   }
   selectMonth(date: Date, datepicker: MatDatepicker<Date>): void {
@@ -132,21 +131,20 @@ export class Calendar implements OnInit {
     const month = current.getMonth();
     this.isLoading.set(true);
     this.resetMonth();
-    this.tradesService.getAllTradesForMonth(year, month)
-      .subscribe({
-        next: (trades: Trade[]) => {
-          const safeTrades = Array.isArray(trades) ? trades : [];
-          this.monthTrades.set(safeTrades);
-          const pnlData = this.buildPnlData(safeTrades);
-          this.buildCalendar(pnlData);
-          this.isLoading.set(false);
-        },
-        error: (error) => {
-          console.error('Failed to load calendar trades', error);
-          this.resetMonth();
-          this.isLoading.set(false);
-        }
-      });
+    this.tradesService.getAllTradesForMonth(year, month).subscribe({
+      next: (trades: Trade[]) => {
+        const safeTrades = Array.isArray(trades) ? trades : [];
+        this.monthTrades.set(safeTrades);
+        const pnlData = this.buildPnlData(safeTrades);
+        this.buildCalendar(pnlData);
+        this.isLoading.set(false);
+      },
+      error: (error) => {
+        logger.error('Failed to load calendar trades', error);
+        this.resetMonth();
+        this.isLoading.set(false);
+      },
+    });
   }
 
   private resetMonth(): void {
@@ -172,7 +170,7 @@ export class Calendar implements OnInit {
     }
 
     return Array.from(pnlByDate.entries())
-      .map(([date, pnl]) => ({date, pnl}))
+      .map(([date, pnl]) => ({ date, pnl }))
       .sort((a, b) => a.date.localeCompare(b.date));
   }
   private buildPnlData(trades: Trade[]): PnlPoint[] {
@@ -183,12 +181,17 @@ export class Calendar implements OnInit {
     for (const item of pnlData) {
       pnlMap.set(item.date, item);
     }
-    const profitable = pnlData.filter(item => item.pnl > 0);
-    const losing = pnlData.filter(item => item.pnl < 0);
-    const bestDayPnl = profitable.length > 0 ? Math.max(...profitable.map(item => item.pnl)) : null;
-    const worstDayPnl = losing.length > 0 ? Math.min(...losing.map(item => item.pnl)) : null;
-    const bestDayDate = bestDayPnl !== null ? profitable.find(item => item.pnl === bestDayPnl)?.date ?? null : null;
-    const worstDayDate = worstDayPnl !== null ? losing.find(item => item.pnl === worstDayPnl)?.date ?? null : null;
+    const profitable = pnlData.filter((item) => item.pnl > 0);
+    const losing = pnlData.filter((item) => item.pnl < 0);
+    const bestDayPnl =
+      profitable.length > 0 ? Math.max(...profitable.map((item) => item.pnl)) : null;
+    const worstDayPnl = losing.length > 0 ? Math.min(...losing.map((item) => item.pnl)) : null;
+    const bestDayDate =
+      bestDayPnl !== null
+        ? (profitable.find((item) => item.pnl === bestDayPnl)?.date ?? null)
+        : null;
+    const worstDayDate =
+      worstDayPnl !== null ? (losing.find((item) => item.pnl === worstDayPnl)?.date ?? null) : null;
     const current = this.currentMonth();
     const year = current.getFullYear();
     const month = current.getMonth();
@@ -223,40 +226,37 @@ export class Calendar implements OnInit {
     isCurrentMonth: boolean,
     pnlMap: Map<string, PnlPoint>,
     bestDayDate: string | null,
-    worstDayDate: string | null
+    worstDayDate: string | null,
   ): CalendarDay {
     const dateKey = this.toDateKey(date);
     const data = pnlMap.get(dateKey);
     return {
-      date, dateKey,
+      date,
+      dateKey,
       dayNumber: date.getDate(),
       pnl: data?.pnl ?? null,
       isCurrentMonth,
       isToday: this.isToday(date),
       isBestDay: isCurrentMonth && dateKey === bestDayDate,
-      isWorstDay: isCurrentMonth && dateKey === worstDayDate
+      isWorstDay: isCurrentMonth && dateKey === worstDayDate,
     };
   }
-
-
 
   private calculateSummary(pnlData: PnlPoint[]): void {
     const totalPnl = pnlData.reduce((sum, item) => sum + Number(item.pnl), 0);
     this.monthPnl.set(totalPnl);
-    this.profitableDays.set(pnlData.filter(item => item.pnl > 0).length);
-    this.losingDays.set(pnlData.filter(item => item.pnl < 0).length);
+    this.profitableDays.set(pnlData.filter((item) => item.pnl > 0).length);
+    this.losingDays.set(pnlData.filter((item) => item.pnl < 0).length);
   }
   private toDateKey(date: Date): string {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    return formatDateKey(date);
   }
   private isToday(date: Date): boolean {
     const today = new Date();
-    return (date.getFullYear() === today.getFullYear() && date.getMonth() === today.getMonth() && date.getDate() === today.getDate());
+    return (
+      date.getFullYear() === today.getFullYear() &&
+      date.getMonth() === today.getMonth() &&
+      date.getDate() === today.getDate()
+    );
   }
 }
-
-
-

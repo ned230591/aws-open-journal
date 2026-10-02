@@ -1,0 +1,147 @@
+<div class="page-container m-4 p-4">
+  <!-- DATASET COVERAGE -->
+  @if (!coverageLoading()) {
+    @if (datasetCoverage().length > 0) {
+      <div class="dark-green-bg rounded-2 p-3 mb-2 small grey">
+        <span class="fw-bold text-info"
+          >Dataset coverage for {{ swingForm.controls.symbol.value }}:</span
+        >
+        @for (period of datasetCoverage(); track period.from) {
+          <span class="mx-1">{{ period.from }} &rarr; {{ period.to }}</span>
+        }
+        <div class="mt-1">
+          Dates outside these ranges can't be selected below. To generate swing data for a different
+          period, load candles and generate the dataset from
+          <a routerLink="/market-data" class="positive">Market Data</a> first.
+        </div>
+      </div>
+    } @else {
+      <div class="error-bg rounded-2 p-3 mb-2 small negative">
+        No dataset saved yet for {{ swingForm.controls.symbol.value }}. Load candles and generate
+        the dataset from <a routerLink="/market-data" class="positive">Market Data</a> first.
+      </div>
+    }
+  }
+
+  <!-- TOOLBAR -->
+  <form class="row d-flex align-items-center p-4" [formGroup]="swingForm">
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div>
+        <label for="symbol" class="grey small fw-bold"> SYMBOL </label>
+        <select id="symbol" formControlName="symbol" class="w-100 p-2">
+          <option value="NVDA">NVDA</option>
+          <option value="AAPL">AAPL</option>
+          <option value="MSFT">MSFT</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div>
+        <label class="grey small fw-bold">FROM</label>
+        <mat-form-field appearance="outline" class="custom-datepicker rounded-2 h-input">
+          <input
+            matInput
+            class="bg-transparent"
+            [matDatepicker]="fromPicker"
+            [matDatepickerFilter]="isDateInCoverage"
+            formControlName="fromDate"
+            readonly
+            placeholder="mm/dd/yyyy"
+          />
+          <mat-datepicker-toggle matIconSuffix [for]="fromPicker"></mat-datepicker-toggle>
+          <mat-datepicker #fromPicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div>
+        <label class="grey small fw-bold">TO</label>
+        <mat-form-field appearance="outline" class="custom-datepicker rounded-2 h-input">
+          <input
+            matInput
+            class="bg-transparent"
+            [matDatepicker]="toPicker"
+            [matDatepickerFilter]="isDateInCoverage"
+            formControlName="toDate"
+            readonly
+            placeholder="mm/dd/yyyy"
+          />
+          <mat-datepicker-toggle matIconSuffix [for]="toPicker"></mat-datepicker-toggle>
+          <mat-datepicker #toPicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="green-transparent-button col-12 col-sm-6 col-lg-3 mt-3 p-2 rounded-2"
+      (click)="loadData()"
+      [disabled]="loading()"
+    >
+      @if (loading()) {
+        LOADING...
+      } @else {
+        APPLY
+      }
+    </button>
+  </form>
+
+  @if (errorMessage) {
+    <div class="error-bg p-2 rounded-2 negative my-2">
+      <span class="fw-bold"> [ERROR] </span> {{ errorMessage }}
+    </div>
+  }
+
+  <!-- VIEW MODE TOGGLE -->
+  <div class="d-flex justify-content-end mt-3">
+    <button
+      type="button"
+      class="green-transparent-button rounded-2 p-2 small"
+      (click)="toggleViewMode()"
+    >
+      @if (viewMode() === 'sequential') {
+        OVERLAY DAYS
+      } @else {
+        SEQUENTIAL VIEW
+      }
+    </button>
+  </div>
+
+  @if (viewMode() === 'sequential') {
+    <!-- STRUCTURE LEGEND -->
+    <div class="d-flex flex-wrap gap-4 small grey mb-2 mt-2">
+      <span class="d-flex align-items-center gap-2">
+        <span class="legend-dot" style="background: #22c55e"></span>
+        Highs / uptrend
+      </span>
+      <span class="d-flex align-items-center gap-2">
+        <span class="legend-dot" style="background: #ef4444"></span>
+        Lows / downtrend
+      </span>
+      <span
+        class="d-flex align-items-center gap-2"
+        [matTooltip]="structureShiftExplanation"
+        matTooltipClass="structure-shift-tooltip"
+      >
+        <span class="legend-dot legend-ring"></span>
+        LH / HL &mdash; possible structure shift
+      </span>
+    </div>
+  } @else {
+    <!-- OVERLAY LEGEND -->
+    <div class="small grey mb-2 mt-2">
+      Each line is one trading day, aligned by time of day and normalized to % change from that
+      day's open. Brighter line = more recent day. Green = up day, red = down day.
+    </div>
+  }
+
+  <!-- CHART -->
+  <div #chart class="swing-chart div-card"></div>
+
+  <!-- PATTERN STATISTICS -->
+  <div class="mt-4">
+    <app-swing-stats-panel [days]="days"></app-swing-stats-panel>
+  </div>
+</div>

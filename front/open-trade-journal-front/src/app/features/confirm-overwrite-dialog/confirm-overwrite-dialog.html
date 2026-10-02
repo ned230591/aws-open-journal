@@ -1,0 +1,33 @@
+<div class="dialog p-4 rounded-4">
+  <div class="d-flex align-items-center gap-2 mb-3">
+    <mat-icon class="negative">warning</mat-icon>
+    <span class="fs-6 text-uppercase fw-bold text-light">{{ data.title }}</span>
+  </div>
+  <mat-dialog-content>
+    <div class="small align-items-start mb-3">
+      <div class="grey row text-start mb-2">{{ data.message }}</div>
+      <div class="dark-green-bg rounded-2 p-2">
+        @for (period of data.periods; track period.from) {
+          <div class="small grey">{{ period.from }} &rarr; {{ period.to }}</div>
+        }
+      </div>
+      <div class="text-danger row text-start mt-2">[ ! ] This action cannot be undone.</div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end" class="gap-2">
+    <button
+      type="button"
+      class="cancel-button py-2 px-4 rounded-1 small"
+      [mat-dialog-close]="false"
+    >
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="delete-button py-2 px-4 rounded-1 small d-flex align-items-center justify-content-center"
+      [mat-dialog-close]="true"
+    >
+      <mat-icon>warning</mat-icon>{{ data.confirmLabel }}
+    </button>
+  </mat-dialog-actions>
+</div>

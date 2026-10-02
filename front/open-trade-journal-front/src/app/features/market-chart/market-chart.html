@@ -1,0 +1,36 @@
+<div class="market-chart div-card p-4">
+  @if (loadingCandles()) {
+    <div class="chart-toolbar loading-toolbar">
+      <span class="loading-message"> Loading market data... </span>
+    </div>
+  } @else if (minDate && maxDate) {
+    <div class="chart-toolbar">
+      <div class="date-control">
+        <label for="chart-date"> Go to date </label>
+
+        <input
+          id="chart-date"
+          type="date"
+          [(ngModel)]="selectedDate"
+          [min]="minDate"
+          [max]="maxDate"
+        />
+
+        <button
+          type="button"
+          class="go-to-date-button"
+          [disabled]="!selectedDate || loadingDate()"
+          (click)="goToDate()"
+        >
+          @if (!loadingDate()) {
+            Go
+          } @else {
+            Loading...
+          }
+        </button>
+      </div>
+    </div>
+  }
+
+  <div #chartContainer class="chart-container"></div>
+</div>

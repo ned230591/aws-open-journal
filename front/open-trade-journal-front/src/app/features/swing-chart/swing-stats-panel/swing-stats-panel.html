@@ -1,0 +1,440 @@
+<div class="swing-stats-panel div-card p-4">
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <div class="text-info fs-6 fw-bold">PATTERN STATISTICS</div>
+      <div class="grey small">{{ dayCount() }} days analyzed &middot; {{ dateRangeLabel() }}</div>
+    </div>
+  </div>
+
+  @if (dayCount() === 0) {
+    <div class="p-4 rounded-2 light-blue-bg">
+      <div class="medium grey text-center">
+        <span class="muted">[EMPTY] </span>NO DATA FOR THIS PERIOD
+      </div>
+    </div>
+  } @else {
+    <!-- DETECTED PATTERNS -->
+    <div class="mb-4">
+      <div class="text-info small fw-bold mb-2 d-flex align-items-center gap-1">
+        <span class="hint-icon" [matTooltip]="detectedPatternsExplanation">?</span>
+        DETECTED PATTERNS
+      </div>
+      @if (detectedPatterns().length === 0) {
+        <div class="dark-green-bg rounded-2 p-3 grey small">
+          No pattern in this range clears the bar yet (needs at least {{ minPatternSample }}
+          occurrences and a clear gap from the baseline). Try a longer date range.
+        </div>
+      } @else {
+        <div class="dark-green-bg rounded-2 p-3">
+          @for (card of detectedPatterns(); track card.title) {
+            <div class="pattern-card">
+              <span
+                class="confidence-badge"
+                [class.strong]="card.confidence === 'strong'"
+                [class.moderate]="card.confidence === 'moderate'"
+                [class.weak]="card.confidence === 'weak'"
+                >{{ card.confidence }}</span
+              >
+              <div>
+                <div class="fw-bold">{{ card.title }}</div>
+                <div class="grey small">{{ card.detail }}</div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- QUICK STATS -->
+    <div class="row dark-green-bg rounded-2 p-4 gap-2 mb-4">
+      <div class="w-auto">
+        <small class="fw-bold grey d-flex align-items-center gap-1">
+          <span class="hint-icon" [matTooltip]="uptrendDaysExplanation">?</span>
+          UPTREND DAYS
+        </small>
+        <div
+          class="fs-6 fw-bold"
+          [class.positive]="uptrendPct() >= 50"
+          [class.negative]="uptrendPct() < 50"
+        >
+          {{ uptrendPct() | number: '1.0-1' }}%
+        </div>
+      </div>
+      <div class="w-auto">
+        <small class="fw-bold grey d-flex align-items-center gap-1">
+          <span class="hint-icon" [matTooltip]="highFirstExplanation">?</span>
+          HIGH FORMED FIRST
+        </small>
+        <div class="fs-6 fw-bold">{{ highFirstPct() | number: '1.0-1' }}%</div>
+      </div>
+      <div class="w-auto">
+        <small class="fw-bold grey d-flex align-items-center gap-1">
+          <span class="hint-icon" [matTooltip]="avgRangeExplanation">?</span>
+          AVG RANGE
+        </small>
+        <div class="fs-6 fw-bold">{{ avgRangePct() | number: '1.2-2' }}%</div>
+      </div>
+      <div class="w-auto">
+        <small class="fw-bold grey d-flex align-items-center gap-1">
+          <span class="hint-icon" [matTooltip]="avgCloseLocationExplanation">?</span>
+          AVG CLOSE LOCATION
+        </small>
+        <div class="fs-6 fw-bold">{{ avgCloseLocation() | number: '1.2-2' }}</div>
+        <div class="close-location-bar mt-1">
+          <div class="close-location-marker" [style.left.%]="avgCloseLocation() * 100"></div>
+        </div>
+      </div>
+      <div class="w-auto">
+        <small class="fw-bold grey d-flex align-items-center gap-1">
+          <span class="hint-icon" [matTooltip]="avgCandleShapeExplanation">?</span>
+          AVG CANDLE SHAPE
+        </small>
+        <div class="fs-6 fw-bold">body {{ avgCandleShape().bodyPct | number: '1.0-0' }}%</div>
+        <div class="small grey">
+          wicks {{ avgCandleShape().upperWickPct | number: '1.0-0' }}% /
+          {{ avgCandleShape().lowerWickPct | number: '1.0-0' }}%
+        </div>
+      </div>
+    </div>
+
+    <!-- TIME OF DAY HISTOGRAM -->
+    <div class="mb-4">
+      <div class="text-info small fw-bold mb-2 d-flex align-items-center gap-1">
+        <span class="hint-icon" [matTooltip]="timeOfDayExplanation">?</span>
+        WHEN DO HIGHS &amp; LOWS FORM
+      </div>
+      <div class="time-bucket-chart">
+        <div echarts [options]="timeBucketChartOptions()" class="echarts-canvas"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- CLOSE LOCATION DISTRIBUTION -->
+      <div class="col-12 col-lg-6 mb-4">
+        <div class="text-info small fw-bold mb-2 d-flex align-items-center gap-1">
+          <span class="hint-icon" [matTooltip]="closeLocationDistributionExplanation">?</span>
+          CLOSE LOCATION DISTRIBUTION
+        </div>
+        <div class="dark-green-bg rounded-2 p-3">
+          @for (bucket of closeLocationBuckets(); track bucket.label) {
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <span class="hint-icon" [matTooltip]="closeLocationBucketExplanation(bucket)">?</span>
+              <span class="grey small bucket-label">{{ bucket.label }}</span>
+              <div class="bucket-bar-track flex-grow-1">
+                <div class="bucket-bar-fill" [style.width.%]="bucket.pct"></div>
+              </div>
+              <span class="grey small bucket-count"
+                >{{ bucket.count }} ({{ bucket.pct | number: '1.0-0' }}%)</span
+              >
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- NEXT DAY CORRELATION -->
+      <div class="col-12 col-lg-6 mb-4">
+        <div class="text-info small fw-bold mb-2 d-flex align-items-center gap-1">
+          <span class="hint-icon" [matTooltip]="nextDayFollowThroughExplanation">?</span>
+          NEXT-DAY FOLLOW-THROUGH
+        </div>
+        <div class="dark-green-bg rounded-2 p-3">
+          <table class="table-sm w-100 small">
+            <thead>
+              <tr class="text-info">
+                <th></th>
+                <th>Today</th>
+                <th>Tomorrow UP</th>
+                <th>Tomorrow DOWN</th>
+                <th>Avg next-day return</th>
+                <th>n</th>
+              </tr>
+            </thead>
+            <tbody class="grey">
+              @for (row of trendTransitions(); track row.fromTrend) {
+                <tr>
+                  <td>
+                    <span class="hint-icon" [matTooltip]="trendTransitionExplanation(row)">?</span>
+                  </td>
+                  <td>{{ row.fromTrend }}</td>
+                  <td class="positive">{{ row.toUpPct | number: '1.0-0' }}%</td>
+                  <td class="negative">{{ row.toDownPct | number: '1.0-0' }}%</td>
+                  <td
+                    [class.positive]="(row.avgNextDayReturnPct ?? 0) > 0"
+                    [class.negative]="(row.avgNextDayReturnPct ?? 0) < 0"
+                  >
+                    @if (row.avgNextDayReturnPct !== null) {
+                      {{ row.avgNextDayReturnPct | number: '1.2-2' }}%
+                    } @else {
+                      &mdash;
+                    }
+                  </td>
+                  <td>{{ row.total }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHOCH RELIABILITY -->
+    @if (shiftReliabilityOverall().n > 0) {
+      <div class="mb-4">
+        <div class="text-info small fw-bold mb-2 d-flex align-items-center gap-1">
+          <span class="hint-icon" [matTooltip]="chochSectionExplanation">?</span>
+          CHOCH RELIABILITY
+        </div>
+        <div class="dark-green-bg rounded-2 p-3">
+          <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-1">
+              <span class="hint-icon" [matTooltip]="shiftOverallExplanation()">?</span>
+              <div>
+                <span class="grey small">Overall confirmation rate</span>
+                <div
+                  class="fs-6 fw-bold"
+                  [class.positive]="shiftReliabilityOverall().confirmedPct >= 50"
+                  [class.negative]="shiftReliabilityOverall().confirmedPct < 50"
+                >
+                  {{ shiftReliabilityOverall().confirmedPct | number: '1.0-0' }}%
+                  <span class="grey small fw-normal">(n={{ shiftReliabilityOverall().n }})</span>
+                </div>
+              </div>
+            </div>
+            @if (shiftReliabilityOverall().n < 20) {
+              <div class="small orange">
+                [!] Small sample &mdash; treat these rates as directional, not conclusive.
+              </div>
+            }
+          </div>
+
+          <div class="row">
+            <div class="col-12 col-lg-4 mb-3">
+              <div class="grey small fw-bold mb-2 d-flex align-items-center gap-1">
+                <span class="hint-icon" [matTooltip]="chochTimeOfDayExplanation">?</span>
+                BY TIME OF DAY
+              </div>
+              @for (bucket of shiftByTimeOfDay(); track bucket.label) {
+                <div class="d-flex align-items-center gap-2 mb-2">
+                  <span class="hint-icon" [matTooltip]="timeOfDayBucketExplanation(bucket)">?</span>
+                  <span class="grey small reliability-label">{{ bucket.label }}</span>
+                  <div class="bucket-bar-track flex-grow-1">
+                    <div class="bucket-bar-fill" [style.width.%]="bucket.confirmedPct"></div>
+                  </div>
+                  <span class="grey small reliability-count"
+                    >{{ bucket.confirmedPct | number: '1.0-0' }}% (n={{ bucket.n }})</span
+                  >
+                </div>
+              }
+            </div>
+
+            <div class="col-12 col-lg-4 mb-3">
+              <div class="grey small fw-bold mb-2 d-flex align-items-center gap-1">
+                <span class="hint-icon" [matTooltip]="chochRangeRegimeExplanation">?</span>
+                BY DAY RANGE REGIME
+              </div>
+              @for (bucket of shiftByRangeRegime(); track bucket.label) {
+                <div class="d-flex align-items-center gap-2 mb-2">
+                  <span class="hint-icon" [matTooltip]="rangeRegimeBucketExplanation(bucket)"
+                    >?</span
+                  >
+                  <span class="grey small reliability-label">{{ bucket.label }}</span>
+                  <div class="bucket-bar-track flex-grow-1">
+                    <div class="bucket-bar-fill" [style.width.%]="bucket.confirmedPct"></div>
+                  </div>
+                  <span class="grey small reliability-count"
+                    >{{ bucket.confirmedPct | number: '1.0-0' }}% (n={{ bucket.n }})</span
+                  >
+                </div>
+              }
+            </div>
+
+            <div class="col-12 col-lg-4 mb-3">
+              <div class="grey small fw-bold mb-2 d-flex align-items-center gap-1">
+                <span class="hint-icon" [matTooltip]="chochStreakExplanation">?</span>
+                BY PRIOR TREND STREAK
+              </div>
+              @for (bucket of shiftByStreak(); track bucket.label) {
+                <div class="d-flex align-items-center gap-2 mb-2">
+                  <span class="hint-icon" [matTooltip]="streakBucketExplanation(bucket)">?</span>
+                  <span class="grey small reliability-label">{{ bucket.label }}</span>
+                  <div class="bucket-bar-track flex-grow-1">
+                    <div class="bucket-bar-fill" [style.width.%]="bucket.confirmedPct"></div>
+                  </div>
+                  <span class="grey small reliability-count"
+                    >{{ bucket.confirmedPct | number: '1.0-0' }}% (n={{ bucket.n }})</span
+                  >
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- SWING AMPLITUDE & SPEED -->
+    @if (legOverall().n > 0) {
+      <div class="mb-4">
+        <div class="text-info small fw-bold mb-2 d-flex align-items-center gap-1">
+          <span class="hint-icon" [matTooltip]="legSectionExplanation">?</span>
+          SWING AMPLITUDE &amp; SPEED
+        </div>
+        <div class="dark-green-bg rounded-2 p-3">
+          <div class="d-flex align-items-center gap-1 mb-3">
+            <span class="hint-icon" [matTooltip]="legOverallExplanation()">?</span>
+            <span class="grey small">Overall avg move</span>
+            <span class="fs-6 fw-bold ms-1">
+              {{ legOverall().avgAmplitudePct | number: '1.2-2' }}% /
+              {{ legOverall().avgDurationMinutes | number: '1.0-0' }}min
+            </span>
+          </div>
+          @for (bucket of legsByTimeOfDay(); track bucket.label) {
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <span class="hint-icon" [matTooltip]="legBucketExplanation(bucket)">?</span>
+              <span class="grey small reliability-label">{{ bucket.label }}</span>
+              <div class="bucket-bar-track flex-grow-1">
+                <div
+                  class="bucket-bar-fill blue-fill"
+                  [style.width.%]="(bucket.avgAmplitudePct / maxLegAmplitude()) * 100"
+                ></div>
+              </div>
+              <span class="grey small reliability-count"
+                >{{ bucket.avgAmplitudePct | number: '1.2-2' }}% /
+                {{ bucket.avgDurationMinutes | number: '1.0-0' }}min</span
+              >
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- SWING COUNT FINGERPRINT -->
+    @if (swingCountFingerprint().length > 0) {
+      <div class="mb-4">
+        <div class="text-info small fw-bold mb-2 d-flex align-items-center gap-1">
+          <span class="hint-icon" [matTooltip]="swingCountSectionExplanation">?</span>
+          SWING COUNT FINGERPRINT
+        </div>
+        <div class="dark-green-bg rounded-2 p-3">
+          <table class="table-sm w-100 small">
+            <thead>
+              <tr class="text-info">
+                <th></th>
+                <th>Swings/day</th>
+                <th>n</th>
+                <th>Avg range %</th>
+                <th>Close extremity</th>
+                <th>Uptrend %</th>
+              </tr>
+            </thead>
+            <tbody class="grey">
+              @for (bucket of swingCountFingerprint(); track bucket.key) {
+                <tr>
+                  <td>
+                    <span class="hint-icon" [matTooltip]="swingCountBucketExplanation(bucket)"
+                      >?</span
+                    >
+                  </td>
+                  <td>{{ bucket.label }}</td>
+                  <td>{{ bucket.n }}</td>
+                  <td>{{ bucket.avgRangePct | number: '1.2-2' }}%</td>
+                  <td>{{ bucket.avgCloseExtremityPct | number: '1.0-0' }}%</td>
+                  <td [class.positive]="bucket.upPct >= 50" [class.negative]="bucket.upPct < 50">
+                    {{ bucket.upPct | number: '1.0-0' }}%
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    <!-- TREND STREAK -> REVERSAL ODDS -->
+    @if (streakReversalBuckets().length > 0) {
+      <div class="mb-4">
+        <div class="text-info small fw-bold mb-2 d-flex align-items-center gap-1">
+          <span class="hint-icon" [matTooltip]="streakSectionExplanation">?</span>
+          TREND STREAK &rarr; REVERSAL ODDS
+        </div>
+        <div class="dark-green-bg rounded-2 p-3">
+          @for (bucket of streakReversalBuckets(); track bucket.key) {
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <span class="hint-icon" [matTooltip]="streakReversalExplanation(bucket)">?</span>
+              <span class="grey small reliability-label">{{ bucket.label }}</span>
+              <div class="bucket-bar-track flex-grow-1">
+                <div class="bucket-bar-fill" [style.width.%]="bucket.positivePct"></div>
+              </div>
+              <span class="grey small reliability-count"
+                >{{ bucket.positivePct | number: '1.0-0' }}% reversed (n={{ bucket.n }})</span
+              >
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- FIRST SWING DIRECTION -> DAY OUTCOME -->
+    @if (firstSwingOutcome().length > 0) {
+      <div class="mb-4">
+        <div class="text-info small fw-bold mb-2 d-flex align-items-center gap-1">
+          <span class="hint-icon" [matTooltip]="firstSwingSectionExplanation">?</span>
+          FIRST SWING DIRECTION &rarr; DAY OUTCOME
+        </div>
+        <div class="dark-green-bg rounded-2 p-3">
+          @for (bucket of firstSwingOutcome(); track bucket.label) {
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <span class="hint-icon" [matTooltip]="firstSwingBucketExplanation(bucket)">?</span>
+              <span class="grey small flex-grow-1">{{ bucket.label }}</span>
+              <span
+                class="small fw-bold"
+                [class.positive]="bucket.upPct >= 50"
+                [class.negative]="bucket.upPct < 50"
+              >
+                {{ bucket.upPct | number: '1.0-0' }}% uptrend
+              </span>
+              <span class="grey small reliability-count">(n={{ bucket.n }})</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- DAY OF WEEK BREAKDOWN -->
+    <div>
+      <div class="text-info small fw-bold mb-2 d-flex align-items-center gap-1">
+        <span class="hint-icon" [matTooltip]="weekdayBreakdownExplanation">?</span>
+        DAY-OF-WEEK BREAKDOWN
+      </div>
+      <div class="dark-green-bg rounded-2 p-3 overflow-x-auto">
+        <table class="table-sm w-100 small">
+          <thead>
+            <tr class="text-info">
+              <th></th>
+              <th>Day</th>
+              <th>n</th>
+              <th>Uptrend %</th>
+              <th>Avg range %</th>
+              <th>Avg close location</th>
+            </tr>
+          </thead>
+          <tbody class="grey">
+            @for (row of weekdayStats(); track row.label) {
+              <tr>
+                <td>
+                  <span class="hint-icon" [matTooltip]="weekdayExplanation(row)">?</span>
+                </td>
+                <td>{{ row.label }}</td>
+                <td>{{ row.count }}</td>
+                <td [class.positive]="row.upPct >= 50" [class.negative]="row.upPct < 50">
+                  {{ row.upPct | number: '1.0-0' }}%
+                </td>
+                <td>{{ row.avgRangePct | number: '1.2-2' }}%</td>
+                <td>{{ row.avgCloseLocation | number: '1.2-2' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>

@@ -1,5 +1,5 @@
-import {PnlPoint} from './pnl-point.model';
-import {StockPnl} from './stock-pnl.model';
+import { PnlPoint } from './pnl-point.model';
+import { StockPnl } from './stock-pnl.model';
 
 export interface DashboardStats {
   totalTrades: number;
@@ -14,14 +14,3 @@ export interface DashboardStats {
   pnlHistory: PnlPoint[];
   stockPnl: StockPnl[];
 }
-
-
-
-
-
-
-
-
-
-
-

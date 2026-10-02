@@ -1,354 +1,205 @@
-import {
-  Component,
-  inject,
-  OnInit
-} from '@angular/core';
-
-import {
-  MatDatepickerModule,
-  MatDatepickerInputEvent
-} from '@angular/material/datepicker';
-
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatNativeDateModule } from '@angular/material/core';
-
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TradesService } from '../../core/services/trades.service';
 import { CookieService } from '../../core/services/cookie.service';
+import { formatDateKey, parseDateKey } from '../../core/utils/date-utils';
+import {
+  DASHBOARD_FILTER_COOKIE,
+  DashboardFilterCookie,
+} from '../../core/models/dashboard-filter.model';
+import { dateRangeValidator } from '../../shared/validators/date-range.validator';
 
 @Component({
   selector: 'app-filter',
   standalone: true,
-  imports: [
-    MatDatepickerModule,
-    MatInputModule,
-    MatNativeDateModule
-  ],
+  imports: [MatDatepickerModule, MatInputModule, MatNativeDateModule, ReactiveFormsModule],
   templateUrl: './filter.html',
-  styleUrl: './filter.css'
+  styleUrl: './filter.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Filter implements OnInit {
-
-  selectedPeriod = '';
-  periodLabel = '';
-  startDate = '';
-  endDate = '';
+  private readonly fb = inject(FormBuilder);
   dashboardService = inject(TradesService);
   cookieService = inject(CookieService);
-  todayDate = this.formatDate(new Date());
+
+  periodLabel = '';
+  todayDate = formatDateKey(new Date());
   minTradeDate = '';
 
+  readonly filterForm = this.fb.group(
+    {
+      selectedPeriod: this.fb.nonNullable.control('month'),
+      startDate: this.fb.control<Date | null>(null),
+      endDate: this.fb.control<Date | null>(null),
+    },
+    { validators: dateRangeValidator('startDate', 'endDate') },
+  );
+
   ngOnInit(): void {
+    this.filterForm.controls.selectedPeriod.valueChanges.subscribe((period) => {
+      if (period !== 'custom') {
+        this.filterForm.patchValue({ startDate: null, endDate: null }, { emitEvent: false });
+      }
+    });
+    this.filterForm.controls.startDate.valueChanges.subscribe((date) =>
+      this.clampControl('startDate', date),
+    );
+    this.filterForm.controls.endDate.valueChanges.subscribe((date) =>
+      this.clampControl('endDate', date),
+    );
+
     this.restoreFilterFromCookie();
     this.applyFilter();
   }
 
-
-
-  private restoreFilterFromCookie(): void {
-    let  savedPeriod = this.cookieService.getCookie('dashboardSelectedPeriod');
-    if(!savedPeriod || savedPeriod.length==0)
-      savedPeriod="month";
-    const savedStartDate = this.cookieService.getCookie('dashboardStartDate');
-    const savedEndDate = this.cookieService.getCookie('dashboardEndDate');
-    const savedPeriodLabel = this.cookieService.getCookie('dashboardPeriodLabel');
-
-
-    if (
-      savedPeriod &&
-      [
-        'today',
-        'yesterday',
-        'week',
-        'lastWeek',
-        'month',
-        'custom'
-      ].includes(savedPeriod)
-    ) {
-       this.cookieService.setCookie('dashboardSelectedPeriod' , 'month')
-      this.selectedPeriod = savedPeriod;
+  private clampControl(name: 'startDate' | 'endDate', date: Date | null): void {
+    if (!date) {
+      return;
     }
-
-
-    if (this.selectedPeriod === 'custom') {
-      this.startDate = savedStartDate ?? '';
-      this.endDate = savedEndDate ?? '';
-    } else {
-      this.startDate = '';
-      this.endDate = '';
+    let clamped = date;
+    if (this.minTradeDate && formatDateKey(clamped) < this.minTradeDate) {
+      clamped = parseDateKey(this.minTradeDate);
     }
-
-
-    if (savedPeriodLabel) {
-      this.periodLabel = savedPeriodLabel;
-    } else if (this.selectedPeriod !== 'custom') {
-      this.periodLabel = this.selectedPeriod;
-    } else if (this.startDate && this.endDate) {
-      this.periodLabel =
-        `${this.startDate}-${this.endDate}`;
-
+    if (formatDateKey(clamped) > this.todayDate) {
+      clamped = parseDateKey(this.todayDate);
+    }
+    if (clamped.getTime() !== date.getTime()) {
+      this.filterForm.controls[name].setValue(clamped, { emitEvent: false });
     }
   }
 
+  private restoreFilterFromCookie(): void {
+    const saved = this.cookieService.getJson<DashboardFilterCookie>(DASHBOARD_FILTER_COOKIE);
+    let savedPeriod = saved?.selectedPeriod;
+    if (!savedPeriod || savedPeriod.length == 0) savedPeriod = 'month';
+    const savedStartDate = saved?.startDate ?? null;
+    const savedEndDate = saved?.endDate ?? null;
+    const savedPeriodLabel = saved?.periodLabel ?? null;
 
+    let selectedPeriod = this.filterForm.controls.selectedPeriod.value;
+    if (
+      savedPeriod &&
+      ['today', 'yesterday', 'week', 'lastWeek', 'month', 'custom'].includes(savedPeriod)
+    ) {
+      selectedPeriod = savedPeriod;
+    }
+
+    const startDate =
+      selectedPeriod === 'custom' && savedStartDate ? parseDateKey(savedStartDate) : null;
+    const endDate = selectedPeriod === 'custom' && savedEndDate ? parseDateKey(savedEndDate) : null;
+
+    this.filterForm.patchValue({ selectedPeriod, startDate, endDate }, { emitEvent: false });
+
+    if (savedPeriodLabel) {
+      this.periodLabel = savedPeriodLabel;
+    } else if (selectedPeriod !== 'custom') {
+      this.periodLabel = selectedPeriod;
+    } else if (startDate && endDate) {
+      this.periodLabel = `${formatDateKey(startDate)}-${formatDateKey(endDate)}`;
+    }
+  }
 
   applyFilter(): void {
     const dates = this.getDateRange();
     if (!dates.startDate || !dates.endDate) {
       return;
     }
-
     if (dates.startDate > dates.endDate) {
       return;
     }
-
     if (
       this.minTradeDate &&
-      (
-        dates.startDate < this.minTradeDate ||
-        dates.endDate < this.minTradeDate
-      )
+      (dates.startDate < this.minTradeDate || dates.endDate < this.minTradeDate)
     ) {
       return;
     }
 
-    if (
-      dates.startDate > this.todayDate ||
-      dates.endDate > this.todayDate
-    ) {
+    if (dates.startDate > this.todayDate || dates.endDate > this.todayDate) {
       return;
     }
 
-    if (this.selectedPeriod === 'custom') {
-      this.periodLabel =
-        `${dates.startDate}-${dates.endDate}`;
+    const selectedPeriod = this.filterForm.controls.selectedPeriod.value;
+    if (selectedPeriod === 'custom') {
+      this.periodLabel = `${dates.startDate}-${dates.endDate}`;
     } else {
-      this.periodLabel = this.selectedPeriod;
+      this.periodLabel = selectedPeriod;
     }
-    this.cookieService.setCookie('dashboardSelectedPeriod', this.selectedPeriod);
-
-    if (this.selectedPeriod === 'custom') {
-      this.cookieService.setCookie('dashboardStartDate', this.startDate);
-      this.cookieService.setCookie('dashboardEndDate', this.endDate);
-    } else {
-      this.cookieService.deleteCookie('dashboardStartDate');
-      this.cookieService.deleteCookie('dashboardEndDate');
-    }
-
-    this.cookieService.setCookie('dashboardPeriodLabel', this.periodLabel);
+    this.cookieService.setJson<DashboardFilterCookie>(DASHBOARD_FILTER_COOKIE, {
+      selectedPeriod,
+      startDate: selectedPeriod === 'custom' ? dates.startDate : '',
+      endDate: selectedPeriod === 'custom' ? dates.endDate : '',
+      periodLabel: this.periodLabel,
+    });
     this.dashboardService.loadStats(dates.startDate, dates.endDate);
   }
 
-
-  onPeriodChange(event: Event): void {
-    const select = event.target as HTMLSelectElement;
-    this.selectedPeriod = select.value;
-    if (this.selectedPeriod !== 'custom') {
-      this.startDate = '';
-      this.endDate = '';
-    }
-  }
-
-
-  onStartDateChange(event: MatDatepickerInputEvent<Date>): void {
-    if (!event.value) {
-      this.startDate = '';
-      return;
-    }
-    let date = event.value;
-    if (
-      this.minTradeDate &&
-      this.toDateKey(date) < this.minTradeDate
-    ) {
-      date = this.parseDate(this.minTradeDate);
-    }
-    if (
-      this.toDateKey(date) > this.todayDate
-    ) {
-      date = this.parseDate(this.todayDate);
-    }
-    this.startDate = this.formatDate(date);
-  }
-
-
-  onEndDateChange(event: MatDatepickerInputEvent<Date>): void {
-    if (!event.value)
-    {this.endDate = '';
-      return;
-    }
-    let date = event.value;
-    if (
-      this.minTradeDate &&
-      this.toDateKey(date) < this.minTradeDate
-    ) {
-      date = this.parseDate(this.minTradeDate);
-    }
-
-    if (
-      this.toDateKey(date) > this.todayDate
-    ) {
-      date = this.parseDate(this.todayDate);
-    }
-    this.endDate = this.formatDate(date);
-  }
-
-
-
-  private getDateRange(): {
-    startDate: string;
-    endDate: string;
-  } {
-
+  private getDateRange(): { startDate: string; endDate: string } {
     const today = new Date();
     let start: Date;
     let end: Date;
-
-    switch (this.selectedPeriod) {
+    const { selectedPeriod, startDate, endDate } = this.filterForm.value;
+    switch (selectedPeriod) {
       case 'today':
-
         start = new Date(today);
         end = new Date(today);
-
         break;
-
-
       case 'yesterday':
-
         start = new Date(today);
-
-        start.setDate(
-          start.getDate() - 1
-        );
-
+        start.setDate(start.getDate() - 1);
         end = new Date(start);
-
         break;
-
-
       case 'week':
-
         start = new Date(today);
-
-        const day =
-          start.getDay();
-
-        const diff =
-          day === 0
-            ? 6
-            : day - 1;
-
-        start.setDate(
-          start.getDate() - diff
-        );
-
+        const day = start.getDay();
+        const diff = day === 0 ? 6 : day - 1;
+        start.setDate(start.getDate() - diff);
         end = new Date(today);
-
         break;
-
-
       case 'lastWeek':
-
         start = new Date(today);
-
-        const currentDay =
-          start.getDay();
-
-        const mondayDiff =
-          currentDay === 0
-            ? 6
-            : currentDay - 1;
-
-        start.setDate(
-          start.getDate() - mondayDiff
-        );
-
-        start.setDate(
-          start.getDate() - 7
-        );
-
+        const currentDay = start.getDay();
+        const mondayDiff = currentDay === 0 ? 6 : currentDay - 1;
+        start.setDate(start.getDate() - mondayDiff);
+        start.setDate(start.getDate() - 7);
         end = new Date(start);
-
-        end.setDate(
-          end.getDate() + 6
-        );
-
+        end.setDate(end.getDate() + 6);
         break;
-
-
       case 'month':
-
-        start = new Date(
-          today.getFullYear(),
-          today.getMonth(),
-          1
-        );
-
+        start = new Date(today.getFullYear(), today.getMonth(), 1);
         end = new Date(today);
-
         break;
-
-
       case 'custom':
-
         return {
-          startDate: this.startDate,
-          endDate: this.endDate
+          startDate: startDate ? formatDateKey(startDate) : '',
+          endDate: endDate ? formatDateKey(endDate) : '',
         };
-
-
       default:
-
-        return {
-          startDate: '',
-          endDate: ''
-        };
+        return { startDate: '', endDate: '' };
     }
-
-
-    return {
-      startDate: this.formatDate(start),
-      endDate: this.formatDate(end)
-    };
+    return { startDate: formatDateKey(start), endDate: formatDateKey(end) };
   }
 
-
-
-  private formatDate(date: Date): string {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+  get startDateKey(): string {
+    const value = this.filterForm.controls.startDate.value;
+    return value ? formatDateKey(value) : '';
   }
 
-
-  private toDateKey(date: Date): string {
-    return this.formatDate(date);
+  get endDateKey(): string {
+    const value = this.filterForm.controls.endDate.value;
+    return value ? formatDateKey(value) : '';
   }
-
-
-  private parseDate(value: string): Date {
-    const [
-      year,
-      month,
-      day
-    ] = value.split('-').map(Number);
-
-    return new Date(
-      year,
-      month - 1,
-      day
-    );
-  }
-
-
-
 
   get isApplyDisabled(): boolean {
-    if (this.selectedPeriod !== 'custom') {
+    const { selectedPeriod, startDate, endDate } = this.filterForm.value;
+    if (selectedPeriod !== 'custom') {
       return false;
     }
-    if (!this.startDate || !this.endDate) {
+    if (!startDate || !endDate) {
       return true;
     }
-    return this.startDate > this.endDate;
+    return startDate > endDate;
   }
 }

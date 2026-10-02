@@ -1,15 +1,13 @@
-import {Component, Input, Signal, signal} from '@angular/core';
-import {CurrencyPipe, DecimalPipe} from '@angular/common';
-import {DashboardStats} from '../../core/models/dashboard-stats.model';
+import { ChangeDetectionStrategy, Component, Input, Signal, signal } from '@angular/core';
+import { CurrencyPipe, DecimalPipe } from '@angular/common';
+import { DashboardStats } from '../../core/models/dashboard-stats.model';
 
 @Component({
   selector: 'app-key-performance-indicators',
-  imports: [
-    CurrencyPipe,
-    DecimalPipe
-  ],
+  imports: [CurrencyPipe, DecimalPipe],
   templateUrl: './key-performance-indicators.html',
-  styleUrl: './key-performance-indicators.css',
+  styleUrl: './key-performance-indicators.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KeyPerformanceIndicators {
   @Input() stats!: Signal<DashboardStats | null>;

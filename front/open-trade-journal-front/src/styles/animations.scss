@@ -1,0 +1,76 @@
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #00e676;
+  box-shadow: 0 0 7px rgba(0, 230, 118, 0.7);
+  animation: dotBlink 2.5s ease-in-out infinite;
+}
+.loading::after {
+  content: ' ...';
+  animation: terminal-blink 1s steps(2, start) infinite;
+}
+@keyframes dotBlink {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes fileFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes terminal-blink {
+  50% {
+    opacity: 0;
+  }
+}
+@keyframes content-from-top {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes terminal-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes loader-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

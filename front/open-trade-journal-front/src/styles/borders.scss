@@ -1,7 +1,34 @@
 .light-green-transparent-border {
-  border:1px solid rgba(198, 237, 210, 0.23);
+  border: 1px solid rgba(198, 237, 210, 0.23);
 }
 
 .light-red-transparent-border {
-  border:1px solid rgba(211, 16, 16, 0.39);
+  border: 1px solid rgba(211, 16, 16, 0.39) !important;
+}
+.border-secondary {
+  border: 1px solid rgb(108 117 125 / 43%) !important;
+}
+.dashed-green-border {
+  border: 1px dashed rgba(0, 255, 136, 0.25);
+}
+.dashed-green-border:hover {
+  border-color: rgba(0, 255, 136, 0.5);
+}
+.border-left-red {
+  border: 1px solid #292929;
+  border-left: 3px solid red;
+}
+
+.border-left-orange {
+  border: 1px solid #292929;
+  border-left: 3px solid #f59e0b;
+}
+.border-left-green {
+  border: 1px solid #292929;
+  border-left: 3px solid green;
+}
+
+.border-left-blue {
+  border: 1px solid #292929;
+  border-left: 3px solid blue;
 }

@@ -1,0 +1,255 @@
+<!--header -->
+<div class="row my-4 p-4">
+  <div class="title text-info fw-bold">
+    @if (!playbookToEdit()) {
+      CREATE PLAYBOOK
+    } @else {
+      EDIT PLAYBOOK
+    }
+  </div>
+  <p class="fw-bold subtitle">
+    @if (!playbookToEdit()) {
+      Select a strategy template or create your own playbook.
+    } @else {
+      Update your trading strategy and rules.
+    }
+  </p>
+</div>
+
+<!-- ERROR -->
+@if (errorMessage) {
+  <div class="error-bg m-4 p-2 negative">{{ errorMessage }}</div>
+}
+<!--form-->
+<form [formGroup]="playbookForm" (ngSubmit)="save()" class="div-card">
+  <!---GENERAL-->
+  <section class="row dark-green-bg p-4 m-4 rounded-4">
+    <div class="text-info fs-6 mb-4">GENERAL</div>
+    @if (!playbookToEdit()) {
+      <div class="col-12 col-xl-6 p-2">
+        <label for="strategyTemplate" class="light-text medium"
+          ><i class="bi bi-dash fw-bold text-info fs-5"></i>STRATEGY</label
+        >
+        <select
+          id="strategyTemplate"
+          class="w-100 bg-transparent m-2 p-2"
+          [value]="selectedTemplateId ?? (creatingNewStrategy ? 'new' : '')"
+          (change)="onStrategySelected($any($event.target).value)"
+        >
+          <option value="" class="bg-dark">SELECT DEFAULT STRATEGY</option>
+          <option value="new" value="" class="bg-dark">+ CREATE NEW STRATEGY</option>
+          @for (template of defaultPlaybooks(); track template.id) {
+            <option value="" class="bg-dark" [value]="template.id">
+              {{ template.strategy }} — {{ template.tradingType }} / {{ template.timeframe }}
+            </option>
+          }
+        </select>
+      </div>
+    }
+    <!-- STRATEGY NAME -->
+    @if (creatingNewStrategy || playbookToEdit()) {
+      <div class="col-12 col-xl-6 p-2">
+        <label for="strategy" class="light-text medium"
+          ><i class="bi bi-dash fw-bold text-info fs-5"></i>STRATEGY NAME
+        </label>
+        <input
+          id="strategy"
+          type="text"
+          class="w-100 bg-transparent m-2 p-2"
+          formControlName="strategy"
+          placeholder="London Session Breakout"
+        />
+        @if (playbookForm.controls.strategy.touched && playbookForm.controls.strategy.invalid) {
+          <small class="negative m-2">[!] Strategy is required.</small>
+        }
+      </div>
+    }
+    <div class="col-12 p-2">
+      <label for="description" class="light-text medium"
+        ><i class="bi bi-dash fw-bold text-info fs-5"></i>DESCRIPTION</label
+      >
+      <textarea
+        id="description"
+        rows="3"
+        class="w-100 bg-transparent m-2 p-2"
+        formControlName="description"
+        placeholder="Describe the trading idea..."
+      ></textarea>
+    </div>
+
+    <div class="col-12 col-xl-6 p-2">
+      <label for="tradingType" class="light-text medium"
+        ><i class="bi bi-dash fw-bold text-info fs-5"></i>TRADING TYPE</label
+      >
+      <select id="tradingType" class="w-100 bg-transparent m-2 p-2" formControlName="tradingType">
+        @for (type of tradingTypes; track type) {
+          <option [value]="type" class="bg-dark">{{ type }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="col-12 col-xl-6 p-2">
+      <label for="timeframe" class="light-text medium"
+        ><i class="bi bi-dash fw-bold text-info fs-5"></i>TIMEFRAME</label
+      >
+      <select id="timeframe" class="w-100 bg-transparent m-2 p-2" formControlName="timeframe">
+        @for (timeframe of timeframes; track timeframe) {
+          <option [value]="timeframe" class="bg-dark">{{ timeframe }}</option>
+        }
+      </select>
+    </div>
+  </section>
+
+  <!-- ENTRY RULES -->
+  <section class="dark-green-bg p-4 m-4 rounded-4">
+    <div class="text-info fs-6 fw-bold mb-2">ENTRY RULES</div>
+    <div class="grey small mb-3">Select the rules you want to keep in this playbook.</div>
+    @if (entryRuleOptions().length === 0) {
+      <div class="border-secondary rounded-2 p-3 mb-3 grey">
+        <span class="grey small">No entry rules yet.</span>
+      </div>
+    } @else {
+      <div class="rules-list grey">
+        @for (rule of entryRuleOptions(); track rule) {
+          <div
+            class="rule-item d-flex align-items-center justify-content-between p-2 mb-2 border border-secondary rounded-2"
+          >
+            <label class="d-flex align-items-center gap-2 w-100">
+              <input
+                type="checkbox"
+                [checked]="isEntryRuleSelected(rule)"
+                (change)="toggleEntryRule(rule)"
+              />
+              <span>{{ rule }}</span>
+            </label>
+            @if (creatingNewStrategy) {
+              <button
+                type="button"
+                class="bg-transparent border-0 text-danger"
+                title="Remove rule"
+                (click)="removeEntryRule(rule)"
+              >
+                <i class="bi bi-x fw-bold fs-4"></i>
+              </button>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    @if (creatingNewStrategy || playbookToEdit()) {
+      <div class="d-flex gap-2 mt-3">
+        <input
+          #entryRuleInput
+          type="text"
+          class="w-100 bg-transparent p-2"
+          placeholder="Add entry rule..."
+          (keyup.enter)="addEntryRule(entryRuleInput)"
+        />
+        <button
+          type="button"
+          class="rounded-2 px-3 header-icon text-info"
+          (click)="addEntryRule(entryRuleInput)"
+        >
+          +
+        </button>
+      </div>
+    }
+  </section>
+
+  <!-- EXIT RULES -->
+  <section class="dark-green-bg p-4 m-4 rounded-4">
+    <div class="blue fs-6 fw-bold mb-2">EXIT RULES</div>
+    <div class="grey small mb-3">Select the rules you want to keep in this playbook.</div>
+    @if (exitRuleOptions().length === 0) {
+      <div class="border-secondary rounded-2 p-3 mb-3">
+        <span class="grey small">No exit rules yet.</span>
+      </div>
+    } @else {
+      <div class="rules-list grey">
+        @for (rule of exitRuleOptions(); track rule) {
+          <div
+            class="rule-item d-flex align-items-center justify-content-between p-2 mb-2 border border-secondary rounded-2"
+          >
+            <label class="d-flex align-items-center gap-2 w-100">
+              <input
+                type="checkbox"
+                [checked]="isExitRuleSelected(rule)"
+                (change)="toggleExitRule(rule)"
+              />
+              <span>{{ rule }}</span>
+            </label>
+            @if (creatingNewStrategy) {
+              <button
+                type="button"
+                class="bg-transparent border-0 text-danger"
+                title="Remove rule"
+                (click)="removeExitRule(rule)"
+              >
+                <i class="bi bi-x fs-4 fw-bold"></i>
+              </button>
+            }
+          </div>
+        }
+      </div>
+    }
+    @if (creatingNewStrategy || playbookToEdit()) {
+      <div class="d-flex gap-2 mt-3">
+        <input
+          #exitRuleInput
+          type="text"
+          class="w-100 bg-transparent p-2"
+          placeholder="Add exit rule..."
+          (keyup.enter)="addExitRule(exitRuleInput)"
+        />
+        <button
+          type="button"
+          class="header-icon text-info rounded-2 px-3"
+          (click)="addExitRule(exitRuleInput)"
+        >
+          +
+        </button>
+      </div>
+    }
+  </section>
+
+  <!-- RISK MANAGEMENT -->
+  <section class="p-4 m-4 dark-green-bg rounded-4">
+    <div class="blue fs-6 fw-bold">RISK MANAGEMENT</div>
+    <textarea
+      class="w-100 bg-transparent m-2 p-2"
+      formControlName="riskManagement"
+      placeholder="Example: Maximum 1% account risk - Never move stop further away - Minimum target 2R"
+    ></textarea>
+  </section>
+
+  <!--TRADING CONDITIONS -->
+  <section class="p-4 m-4 dark-green-bg rounded-4">
+    <div class="text-info fs-6 fw-bold">TRADING CONDITIONS</div>
+    <textarea
+      class="w-100 bg-transparent m-2 p-2"
+      formControlName="tradingConditions"
+      placeholder="Example: EURUSD / GBPUSD - London session - Avoid major news"
+    ></textarea>
+  </section>
+
+  <!-- FORM ACTIONS-->
+  <div class="d-flex align-items-center justify-content-end gap-3 p-4">
+    <button type="button" class="py-1 px-2 small rounded-2 cancel-button" (click)="cancelForm()">
+      CANCEL
+    </button>
+    <button
+      type="submit"
+      class="border-secondary py-1 px-2 small rounded-2 save-button"
+      [disabled]="playbookForm.invalid || saving()"
+    >
+      @if (saving()) {
+        SAVING...
+      } @else if (!playbookToEdit()) {
+        CREATE PLAYBOOK
+      } @else {
+        SAVE CHANGES
+      }
+    </button>
+  </div>
+</form>

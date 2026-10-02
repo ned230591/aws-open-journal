@@ -1,31 +1,28 @@
-import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { NgxEchartsDirective } from 'ngx-echarts';
-import {PnlPoint} from '../../core/models/pnl-point.model';
-
-
+import { PnlPoint } from '../../core/models/pnl-point.model';
 
 @Component({
   selector: 'app-chart',
   standalone: true,
   imports: [NgxEchartsDirective, DecimalPipe],
   templateUrl: './chart.html',
-  styleUrl: './chart.scss'
+  styleUrl: './chart.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Chart implements OnChanges {
-
   @Input() pnlHistory: PnlPoint[] = [];
   cumulativePnl = 0;
   chartOptions: any = {};
   protected readonly Math = Math;
 
-/** DOM UPDATE ON CHANGE ****/
+  /** DOM UPDATE ON CHANGE ****/
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['pnlHistory']) {
       this.updateChart();
     }
   }
-
 
   private updateChart(): void {
     let cumulativePnl = 0;
@@ -43,7 +40,7 @@ export class Chart implements OnChanges {
       textStyle: {
         fontFamily: '"Courier New", Courier, monospace',
         color: '#00ff66',
-        fontSize: 14
+        fontSize: 14,
       },
 
       tooltip: {
@@ -55,7 +52,7 @@ export class Chart implements OnChanges {
           color: '#00ff66',
           fontFamily: '"Courier New", monospace',
           fontSize: 16,
-          fontWeight: 'bold'
+          fontWeight: 'bold',
         },
 
         formatter: (params: any) => {
@@ -78,14 +75,14 @@ export class Chart implements OnChanges {
     `;
         },
         extraCssText: `border-radius: 0;  box-shadow: 0 0 12px rgba(0, 255, 102, 0.15);
-  `
+  `,
       },
       grid: {
         top: 35,
         left: 20,
         right: 25,
         bottom: 35,
-        containLabel: true
+        containLabel: true,
       },
 
       xAxis: {
@@ -95,13 +92,13 @@ export class Chart implements OnChanges {
         axisLine: {
           lineStyle: {
             show: true,
-            color:  '#6d706d',
-            width: 2
-          }
+            color: '#6d706d',
+            width: 2,
+          },
         },
 
         axisTick: {
-          show: false
+          show: false,
         },
 
         axisLabel: {
@@ -109,12 +106,12 @@ export class Chart implements OnChanges {
           fontFamily: '"Courier New", monospace',
           fontSize: 14,
           fontWeight: 'bold',
-          margin: 12
+          margin: 12,
         },
 
         splitLine: {
-          show: false
-        }
+          show: false,
+        },
       },
 
       yAxis: {
@@ -123,11 +120,11 @@ export class Chart implements OnChanges {
           show: true,
           lineStyle: {
             color: '#969a96',
-            width: 2
-          }
+            width: 2,
+          },
         },
         axisTick: {
-          show: false
+          show: false,
         },
         axisLabel: {
           color: '#bdbbbb',
@@ -138,7 +135,7 @@ export class Chart implements OnChanges {
           formatter: (value: number) => {
             const sign = value < 0 ? '-' : '';
             return `${sign}$${Math.abs(value).toFixed(0)}`;
-          }
+          },
         },
 
         splitLine: {
@@ -146,9 +143,9 @@ export class Chart implements OnChanges {
             show: true,
             color: '#6e7170',
             width: 1,
-            type: 'dashed'
-          }
-        }
+            type: 'dashed',
+          },
+        },
       },
 
       series: [
@@ -168,21 +165,19 @@ export class Chart implements OnChanges {
             color: '#989c99',
 
             shadowColor: 'rgba(206,241,219,0.6)',
-            shadowBlur: 8
+            shadowBlur: 8,
           },
 
           itemStyle: {
             color: (params: any) => {
-              return params.value >= 0
-                ? '#00ff66'
-                : '#ff3333';
+              return params.value >= 0 ? '#00ff66' : '#ff3333';
             },
 
             borderColor: '#050805',
             borderWidth: 3,
 
             shadowColor: 'rgba(0, 255, 102, 0.5)',
-            shadowBlur: 5
+            shadowBlur: 5,
           },
 
           emphasis: {
@@ -191,8 +186,8 @@ export class Chart implements OnChanges {
               borderColor: '#ffffff',
               borderWidth: 3,
               shadowColor: '#00ff66',
-              shadowBlur: 15
-            }
+              shadowBlur: 15,
+            },
           },
 
           areaStyle: {
@@ -206,24 +201,22 @@ export class Chart implements OnChanges {
               colorStops: [
                 {
                   offset: 0,
-                  color: 'rgba(0, 255, 102, 0.15)'
+                  color: 'rgba(0, 255, 102, 0.15)',
                 },
                 {
                   offset: 1,
-                  color: 'rgba(0, 255, 102, 0.01)'
-                }
-              ]
-            }
-          }
-        }
-      ]
+                  color: 'rgba(0, 255, 102, 0.01)',
+                },
+              ],
+            },
+          },
+        },
+      ],
     };
   }
 
-
   private formatDate(date: string): string {
     const parsedDate = new Date(`${date}T00:00:00`);
-    return parsedDate.toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
+    return parsedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }
-
 }

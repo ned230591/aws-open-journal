@@ -1,4 +1,3 @@
-
 interface CalendarDay {
   date: Date;
   dateKey: string;

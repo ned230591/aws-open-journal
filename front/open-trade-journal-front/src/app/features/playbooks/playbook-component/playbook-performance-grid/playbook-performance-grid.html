@@ -1,0 +1,50 @@
+<div class="w-auto">
+  <small class="fw-bold">TRADES</small>
+  <div class="fs-6 fw-bold">{{ performance().trades }}</div>
+</div>
+<div class="w-auto">
+  <small class="fw-bold">WINS</small>
+  <div class="positive fs-6 fw-bold">{{ performance().wins }}</div>
+</div>
+<div class="w-auto">
+  <small class="fw-bold">LOSSES</small>
+  <div class="negative fs-6 fw-bold">{{ performance().losses }}</div>
+</div>
+<div class="w-auto">
+  <small class="fw-bold">WIN RATE</small>
+  <div class="fs-6 fw-bold">{{ performance().winRate | number: '1.2-2' }}%</div>
+</div>
+<div class="w-auto">
+  <small class="fw-bold">NET P&L</small>
+  <div
+    class="fs-6 fw-bold"
+    [class.positive]="performance().netPnl > 0"
+    [class.negative]="performance().netPnl < 0"
+  >
+    {{ performance().netPnl | number: '1.2-2' }}
+  </div>
+</div>
+<div class="w-auto">
+  <small class="fw-bold">AVERAGE WIN</small>
+  <div class="fs-6 fw-bold">{{ performance().averageWin | number: '1.2-2' }}</div>
+</div>
+
+<div class="w-auto">
+  <small class="fw-bold">AVERAGE LOSS</small>
+  <div class="negative fs-6 fw-bold">{{ performance().averageLoss | number: '1.2-2' }}</div>
+</div>
+
+<div class="w-auto">
+  <small class="fw-bold">EXPECTANCY</small>
+  <div
+    class="fs-6 fw-bold"
+    [class.positive]="performance().expectancy > 0"
+    [class.negative]="performance().expectancy < 0"
+  >
+    {{ performance().expectancy | number: '1.2-2' }}
+  </div>
+</div>
+<div class="w-auto">
+  <small class="fw-bold">PROFIT FACTOR</small>
+  <div class="fs-6 fw-bold">{{ performance().profitFactor | number: '1.2-2' }}</div>
+</div>

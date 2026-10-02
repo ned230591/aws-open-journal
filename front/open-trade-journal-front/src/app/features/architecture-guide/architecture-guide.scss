@@ -1,32 +1,19 @@
-@use '../../../styles/backgrounds' as *;
 .header-icon {
-  width:50px ;
-height: 50px;
+  width: 50px;
+  height: 50px;
   background: rgba(59, 71, 73, 0.3);
   border: 1px solid rgba(144, 233, 244, 0.9);
 }
 /** faq**/
- .faq-item {
+.faq-item {
   border: 1px solid rgba(255, 255, 255, 0.065);
-  background:
-    linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.018),
-      transparent 45%
-    ),
-    #101512;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.018), transparent 45%), #101512;
   &[open] {
     mat-icon {
       color: #16bcd1 !important;
     }
-    border-color: rgba(66, 211, 255, 0.20);
-    background:
-      linear-gradient(
-        135deg,
-        rgba(66, 211, 255, 0.025),
-        transparent 45%
-      ),
-      #111715;
+    border-color: rgba(66, 211, 255, 0.2);
+    background: linear-gradient(135deg, rgba(66, 211, 255, 0.025), transparent 45%), #111715;
     summary mat-icon {
       transform: rotate(180deg);
     }
@@ -54,15 +41,15 @@ height: 50px;
     }
   }
 }
- .faq-index {
+.faq-index {
   color: #71bcd6;
   font-size: 14px;
 }
- .faq-question {
+.faq-question {
   color: #c8d0cb;
   font-size: 15px;
 }
- .faq-content {
+.faq-content {
   border-top: 1px solid rgba(255, 255, 255, 0.055);
   color: #919b94;
   font-size: 14px;
@@ -81,21 +68,15 @@ height: 50px;
   line-height: 1.85;
 }
 
- .faq-tip {
+.faq-tip {
   border-left: 2px solid #42d3ff;
-  background:
-    linear-gradient(
-      135deg,
-      rgba(66, 211, 255, 0.035),
-      transparent 60%
-    ),
-    #090e0c;
+  background: linear-gradient(135deg, rgba(66, 211, 255, 0.035), transparent 60%), #090e0c;
   color: #7f8982;
   font-size: 12px;
   line-height: 1.7;
 }
 @media (max-width: 768px) {
- .faq-item {
+  .faq-item {
     summary {
       min-height: 62px;
       padding: 0 15px;
@@ -107,22 +88,21 @@ height: 50px;
     font-size: 11px;
   }
 
- .faq-question {
+  .faq-question {
     font-size: 14px;
   }
 
- .faq-content {
+  .faq-content {
     font-size: 13px;
     line-height: 1.75;
   }
-
 
   .architecture-code {
     font-size: 11px;
     line-height: 1.75;
   }
 
- .terminal-flow {
+  .terminal-flow {
     gap: 8px;
     padding: 13px;
     font-size: 11px;

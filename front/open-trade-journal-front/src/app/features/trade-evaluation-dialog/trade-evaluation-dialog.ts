@@ -1,831 +1,350 @@
-import {
-  Component,
-  Inject,
-  OnInit,
-  inject,
-  signal
-} from '@angular/core';
-
-import {
-  MAT_DIALOG_DATA,
-  MatDialogRef
-} from '@angular/material/dialog';
-
+import { ChangeDetectionStrategy, Component, Inject, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
-import { DecimalPipe } from '@angular/common';
+import { MatTooltip } from '@angular/material/tooltip';
 import { forkJoin } from 'rxjs';
-
 import { Trade } from '../../core/models/trade.model';
+import {
+  TradeEvaluation,
+  TradeEvaluationScreenshot,
+  EvaluationRating,
+  MistakeType,
+  TradeEvaluationRequest,
+} from '../../core/models/trade-evaluation.model';
 import { TradesService } from '../../core/services/trades.service';
-import { TradeEvaluationRequest } from '../../core/models/trade-evaluation-request.model';
-import { TradeEvaluationScreenshot } from '../../core/models/trade-evaluation-screenshot.model';
-import {MatTooltip} from '@angular/material/tooltip';
-
-export interface TradeEvaluationDialogData {
-  trade: Trade;
-}
+import { logger } from '../../core/utils/logger';
 
 @Component({
   selector: 'app-trade-evaluation-dialog',
   standalone: true,
-  imports: [
-    FormsModule,
-    MatIcon,
-    MatTooltip
-  ],
+  imports: [CommonModule, FormsModule, MatIcon, MatTooltip],
   templateUrl: './trade-evaluation-dialog.html',
-  styleUrl: './trade-evaluation-dialog.scss'
+  styleUrls: ['./trade-evaluation-dialog.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TradeEvaluationDialog implements OnInit {
-
-  private readonly tradesService = inject(TradesService);
-
-  // =========================================
-  // EVALUATION
-  // =========================================
-
+  trade: Trade;
+  playbookAdherence = signal<EvaluationRating | null>(null);
+  entryQuality = signal<EvaluationRating | null>(null);
+  exitQuality = signal<EvaluationRating | null>(null);
+  riskManagementQuality = signal<EvaluationRating | null>(null);
+  executionQuality = signal<EvaluationRating | null>(null);
+  mistakeType = signal<MistakeType | null>(null);
   positivePoints = signal<string[]>([]);
-
   negativePoints = signal<string[]>([]);
-
-  comment = signal<string>('');
-
-
-  // =========================================
-  // SCREENSHOTS
-  // =========================================
-
-  // Screenshots already saved in the backend
-  screenshots =
-    signal<TradeEvaluationScreenshot[]>([]);
-
-  // Files selected but not uploaded yet
-  screenshotsToUpload =
-    signal<File[]>([]);
-
-  // Local previews for newly selected files
-  screenshotPreviews =
-    signal<string[]>([]);
-
-  // Authenticated screenshot data URLs
-  //
-  // IMPORTANT:
-  // These are data:image/... URLs, NOT blob:http://... URLs.
-  screenshotUrls =
-    signal<Record<number, string>>({});
-
-
-  // =========================================
-  // UI STATE
-  // =========================================
-
+  newPositivePoint = signal('');
+  newNegativePoint = signal('');
+  comment = signal('');
+  screenshots = signal<TradeEvaluationScreenshot[]>([]);
+  screenshotsToUpload = signal<File[]>([]);
+  screenshotPreviews = signal<string[]>([]);
+  screenshotUrls = signal<Record<number, string>>({});
   loading = signal(false);
-
   saving = signal(false);
 
+  readonly mistakeTypes: MistakeType[] = [
+    'NO_MISTAKE',
+    'CHASING',
+    'EARLY_ENTRY',
+    'LATE_ENTRY',
+    'EARLY_EXIT',
+    'LATE_EXIT',
+    'OVERSIZED_POSITION',
+    'MOVED_STOP',
+    'IGNORED_STOP',
+    'REVENGE_TRADE',
+    'OVERTRADING',
+    'FOMO',
+    'TRADED_OUTSIDE_PLAYBOOK',
+    'POOR_RISK_REWARD',
+    'HESITATION',
+    'OTHER',
+  ];
 
-  // =========================================
-  // CONSTRUCTOR
-  // =========================================
+  readonly evaluationRatings: EvaluationRating[] = [
+    'EXCELLENT',
+    'GOOD',
+    'AVERAGE',
+    'POOR',
+    'VERY_POOR',
+  ];
 
   constructor(
+    private readonly dialogRef: MatDialogRef<TradeEvaluationDialog>,
+    private readonly tradesService: TradesService,
     @Inject(MAT_DIALOG_DATA)
-    public readonly data: TradeEvaluationDialogData,
-
-    private readonly dialogRef:
-    MatDialogRef<TradeEvaluationDialog>
-  ) {}
-
-
-  // =========================================
-  // INIT
-  // =========================================
+    data: { trade: Trade },
+  ) {
+    this.trade = data.trade;
+  }
 
   ngOnInit(): void {
     this.loadEvaluation();
   }
 
-
-  // =========================================
-  // LOAD EVALUATION
-  // =========================================
-
-  private loadEvaluation(): void {
-
+  loadEvaluation(): void {
+    if (!this.trade?.id) {
+      return;
+    }
     this.loading.set(true);
-
-    this.tradesService
-      .getTradeEvaluation(
-        this.data.trade.ibExecID
-      )
-      .subscribe({
-
-        next: (evaluation) => {
-
-          this.positivePoints.set(
-            [...(evaluation.positivePoints ?? [])]
-          );
-
-          this.negativePoints.set(
-            [...(evaluation.negativePoints ?? [])]
-          );
-
-          this.comment.set(
-            evaluation.comment ?? ''
-          );
-
-
-          const savedScreenshots =
-            [...(evaluation.screenshots ?? [])];
-
-          this.screenshots.set(
-            savedScreenshots
-          );
-
-
+    this.tradesService.getTradeEvaluation(this.trade.ibExecID).subscribe({
+      next: (evaluation: TradeEvaluation | null) => {
+        if (!evaluation) {
           this.loading.set(false);
-
-
-          // Load every saved screenshot through
-          // Angular HttpClient so authentication
-          // interceptors are applied.
-          for (const screenshot of savedScreenshots) {
-          console.log("eee " + JSON.stringify(screenshot.filename))
-            if (screenshot.id) {
-
-              this.loadScreenshotImage(
-                screenshot.id,
-                screenshot.contentType
-              );
-            }
-          }
-        },
-
-        error: (error) => {
-
-          this.loading.set(false);
-
-          if (error.status === 404) {
-
-            this.positivePoints.set([]);
-            this.negativePoints.set([]);
-            this.comment.set('');
-            this.screenshots.set([]);
-
-            return;
-          }
-
-          console.error(
-            'Failed to load trade evaluation:',
-            error
-          );
+          return;
         }
-      });
+        this.playbookAdherence.set(evaluation.playbookAdherence ?? null);
+        this.entryQuality.set(evaluation.entryQuality ?? null);
+        this.exitQuality.set(evaluation.exitQuality ?? null);
+        this.riskManagementQuality.set(evaluation.riskManagementQuality ?? null);
+        this.executionQuality.set(evaluation.executionQuality ?? null);
+        this.mistakeType.set(evaluation.mistakeType ?? null);
+        this.positivePoints.set([...(evaluation.positivePoints ?? [])]);
+        this.negativePoints.set([...(evaluation.negativePoints ?? [])]);
+        this.comment.set(evaluation.comment ?? '');
+        this.screenshots.set([...(evaluation.screenshots ?? [])]);
+        this.loadSavedScreenshotUrls(evaluation.screenshots ?? []);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.loading.set(false);
+      },
+    });
   }
 
-
-  // =========================================
-  // LOAD SAVED SCREENSHOT
-  // =========================================
-
-  private loadScreenshotImage(
-    screenshotId: number,
-    contentType?: string
-  ): void {
-
-    this.tradesService
-      .getTradeEvaluationScreenshot(
-        this.data.trade.ibExecID,
-        screenshotId
-      )
-      .subscribe({
-
-        next: (blob) => {
-
-          console.log(
-            'Screenshot loaded:',
-            {
-              screenshotId,
-              blobType: blob.type,
-              blobSize: blob.size,
-              expectedType: contentType
-            }
-          );
-
-
-          if (!blob || blob.size === 0) {
-
-            console.error(
-              'Screenshot response is empty:',
-              screenshotId
-            );
-
-            return;
-          }
-
-
-          // If the backend/gateway does not preserve
-          // the image content type, create a new Blob
-          // using the type stored with the screenshot.
-          let imageBlob = blob;
-
-
-          if (
-            !blob.type.startsWith('image/') &&
-            contentType?.startsWith('image/')
-          ) {
-
-            imageBlob =
-              new Blob(
-                [blob],
-                {
-                  type: contentType
-                }
-              );
-          }
-
-
-          const reader =
-            new FileReader();
-
-
-          reader.onload = () => {
-
-            const dataUrl =
-              reader.result as string;
-
-
-            if (
-              !dataUrl ||
-              !dataUrl.startsWith('data:')
-            ) {
-
-              console.error(
-                'Invalid screenshot data URL:',
-                screenshotId
-              );
-
-              return;
-            }
-
-
-            this.screenshotUrls.update(
-              urls => ({
-                ...urls,
-                [screenshotId]: dataUrl
-              })
-            );
-          };
-
-
-          reader.onerror = (error) => {
-
-            console.error(
-              'Failed to convert screenshot to data URL:',
-              screenshotId,
-              error
-            );
-          };
-
-
-          reader.readAsDataURL(imageBlob);
-        },
-
-        error: (error) => {
-
-          console.error(
-            'Failed to load screenshot:',
-            screenshotId,
-            error
-          );
-        }
-      });
+  setPlaybookAdherence(value: EvaluationRating): void {
+    this.playbookAdherence.set(value);
   }
 
+  setEntryQuality(value: EvaluationRating): void {
+    this.entryQuality.set(value);
+  }
 
-  // =========================================
-  // POSITIVE POINTS
-  // =========================================
+  setExitQuality(value: EvaluationRating): void {
+    this.exitQuality.set(value);
+  }
+
+  setRiskManagementQuality(value: EvaluationRating): void {
+    this.riskManagementQuality.set(value);
+  }
+
+  setExecutionQuality(value: EvaluationRating): void {
+    this.executionQuality.set(value);
+  }
+
+  setMistakeType(value: MistakeType): void {
+    this.mistakeType.set(value);
+  }
+
+  formatRating(value: EvaluationRating | null): string {
+    if (!value) {
+      return '';
+    }
+    return value
+      .replaceAll('_', ' ')
+      .toLowerCase()
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+  }
+
+  formatMistake(value: MistakeType | null): string {
+    if (!value) {
+      return '';
+    }
+    return value
+      .replaceAll('_', ' ')
+      .toLowerCase()
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+  }
 
   addPositivePoint(): void {
-
-    this.positivePoints.update(
-      points => [
-        ...points,
-        ''
-      ]
-    );
+    const point = this.newPositivePoint().trim();
+    if (!point) {
+      return;
+    }
+    this.positivePoints.update((points) => [...points, point]);
+    this.newPositivePoint.set('');
   }
 
-
-  updatePositivePoint(
-    index: number,
-    value: string
-  ): void {
-
-    this.positivePoints.update(points => {
-
+  updatePositivePoint(index: number, value: string): void {
+    this.positivePoints.update((points) => {
       const updated = [...points];
-
       updated[index] = value;
-
       return updated;
     });
   }
 
-
-  removePositivePoint(
-    index: number
-  ): void {
-
-    this.positivePoints.update(
-      points =>
-        points.filter(
-          (_, i) => i !== index
-        )
-    );
+  removePositivePoint(index: number): void {
+    this.positivePoints.update((points) => points.filter((_, i) => i !== index));
   }
-
-
-  // =========================================
-  // NEGATIVE POINTS
-  // =========================================
 
   addNegativePoint(): void {
-
-    this.negativePoints.update(
-      points => [
-        ...points,
-        ''
-      ]
-    );
+    const point = this.newNegativePoint().trim();
+    if (!point) {
+      return;
+    }
+    this.negativePoints.update((points) => [...points, point]);
+    this.newNegativePoint.set('');
   }
 
-
-  updateNegativePoint(
-    index: number,
-    value: string
-  ): void {
-
-    this.negativePoints.update(points => {
-
+  updateNegativePoint(index: number, value: string): void {
+    this.negativePoints.update((points) => {
       const updated = [...points];
-
       updated[index] = value;
-
       return updated;
     });
   }
 
-
-  removeNegativePoint(
-    index: number
-  ): void {
-
-    this.negativePoints.update(
-      points =>
-        points.filter(
-          (_, i) => i !== index
-        )
-    );
+  removeNegativePoint(index: number): void {
+    this.negativePoints.update((points) => points.filter((_, i) => i !== index));
   }
 
+  onPositivePointKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      this.addPositivePoint();
+    }
+  }
+  onNegativePointKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      this.addNegativePoint();
+    }
+  }
 
-  // =========================================
-  // SCREENSHOT SELECTION
-  // =========================================
-
-  onScreenshotSelected(
-    event: Event
-  ): void {
-
-    const input =
-      event.target as HTMLInputElement;
-
-
-    if (
-      !input.files ||
-      input.files.length === 0
-    ) {
+  onScreenshotSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) {
       return;
     }
-
-
-    const files =
-      Array
-        .from(input.files)
-        .filter(file =>
-          file.type.startsWith('image/')
-        );
-
-
-    if (files.length === 0) {
-
-      console.error(
-        'No valid image files selected'
-      );
-
-      input.value = '';
-
-      return;
-    }
-
-
-    // Store files for upload
-    this.screenshotsToUpload.update(
-      current => [
-        ...current,
-        ...files
-      ]
-    );
-
-
-    // Create previews
-    for (const file of files) {
-
-      const reader =
-        new FileReader();
-
-
+    const files = Array.from(input.files);
+    const validFiles = files.filter((file) => file.type.startsWith('image/'));
+    this.screenshotsToUpload.update((existing) => [...existing, ...validFiles]);
+    validFiles.forEach((file) => {
+      const reader = new FileReader();
       reader.onload = () => {
-
-        this.screenshotPreviews.update(
-          previews => [
-            ...previews,
-            reader.result as string
-          ]
-        );
+        this.screenshotPreviews.update((previews) => [...previews, reader.result as string]);
       };
-
-
-      reader.onerror = (error) => {
-
-        console.error(
-          'Failed to create screenshot preview:',
-          file.name,
-          error
-        );
-      };
-
-
       reader.readAsDataURL(file);
-    }
-
-
-    // Allow selecting the same file again
+    });
     input.value = '';
   }
 
+  removeScreenshotToUpload(index: number): void {
+    this.screenshotsToUpload.update((files) => files.filter((_, i) => i !== index));
+    this.screenshotPreviews.update((previews) => previews.filter((_, i) => i !== index));
+  }
 
-  // =========================================
-  // REMOVE NEW SCREENSHOT
-  // =========================================
-
-  removeScreenshot(
-    index: number
-  ): void {
-
-    this.screenshotsToUpload.update(
-      files =>
-        files.filter(
-          (_, i) => i !== index
-        )
+  loadSavedScreenshotUrls(screenshots: TradeEvaluationScreenshot[]): void {
+    if (!screenshots?.length) {
+      return;
+    }
+    const requests = screenshots.map((screenshot) =>
+      this.tradesService.getTradeEvaluationScreenshot(this.trade.ibExecID, screenshot.id),
     );
 
-
-    this.screenshotPreviews.update(
-      previews =>
-        previews.filter(
-          (_, i) => i !== index
-        )
-    );
+    forkJoin(requests).subscribe({
+      next: (blobs) => {
+        blobs.forEach((blob, index) => {
+          const screenshot = screenshots[index];
+          const reader = new FileReader();
+          reader.onload = () => {
+            this.screenshotUrls.update((urls) => ({
+              ...urls,
+              [screenshot.id]: reader.result as string,
+            }));
+          };
+          reader.readAsDataURL(blob);
+        });
+      },
+    });
   }
 
-
-  // =========================================
-  // GET SAVED SCREENSHOT URL
-  // =========================================
-
-  getScreenshotUrl(
-    screenshot: TradeEvaluationScreenshot
-  ): string {
-
-    if (!screenshot.id) {
-      return '';
-    }
-
-
-    return this.screenshotUrls()[
-      screenshot.id
-      ] ?? '';
+  getSavedScreenshotUrl(screenshotId: number): string | null {
+    return this.screenshotUrls()[screenshotId] ?? null;
   }
 
-
-  // =========================================
-  // OPEN SCREENSHOT
-  // =========================================
-
-  openScreenshot(
-    screenshot: TradeEvaluationScreenshot
-  ): void {
-
-    if (!screenshot.id) {
+  deleteSavedScreenshot(screenshot: TradeEvaluationScreenshot): void {
+    if (!this.trade?.id) {
       return;
     }
-
-
-    const imageUrl =
-      this.screenshotUrls()[
-        screenshot.id
-        ];
-
-
-    if (!imageUrl) {
-
-      console.warn(
-        'Screenshot is not loaded yet:',
-        screenshot.id
-      );
-
-      return;
-    }
-
-
-    // Open blank tab first.
-    // Do NOT open the backend URL directly,
-    // because that would produce a 401.
-    const newWindow =
-      window.open('', '_blank');
-
-
-    if (!newWindow) {
-
-      console.error(
-        'Browser blocked the new tab'
-      );
-
-      return;
-    }
-
-
-    newWindow.document.title =
-      screenshot.filename ?? 'Screenshot';
-
-
-    newWindow.document.body.style.margin =
-      '0';
-
-    newWindow.document.body.style.background =
-      '#111';
-
-    newWindow.document.body.style.display =
-      'flex';
-
-    newWindow.document.body.style.alignItems =
-      'center';
-
-    newWindow.document.body.style.justifyContent =
-      'center';
-
-
-    const image =
-      newWindow.document.createElement('img');
-
-
-    image.src = imageUrl;
-
-    image.alt =
-      screenshot.filename ?? 'Trade screenshot';
-
-    image.style.maxWidth =
-      '100vw';
-
-    image.style.maxHeight =
-      '100vh';
-
-    image.style.objectFit =
-      'contain';
-
-
-    newWindow.document.body.appendChild(
-      image
-    );
+    this.tradesService.deleteTradeEvaluationScreenshot(screenshot.id).subscribe({
+      next: () => {
+        this.screenshots.update((screenshots) =>
+          screenshots.filter((item) => item.id !== screenshot.id),
+        );
+        this.screenshotUrls.update((urls) => {
+          const updated = { ...urls };
+          delete updated[screenshot.id];
+          return updated;
+        });
+      },
+    });
   }
 
-
-  // =========================================
-  // DELETE SAVED SCREENSHOT
-  // =========================================
-
-  deleteSavedScreenshot(
-    screenshot: TradeEvaluationScreenshot
-  ): void {
-
-    if (!screenshot.id) {
-      return;
-    }
-
-
-    this.tradesService
-      .deleteTradeEvaluationScreenshot(
-        this.data.trade.ibExecID,
-        screenshot.id
-      )
-      .subscribe({
-
-        next: () => {
-
-          const id =
-            screenshot.id!;
-
-
-          this.screenshots.update(
-            items =>
-              items.filter(
-                item =>
-                  item.id !== id
-              )
-          );
-
-
-          this.screenshotUrls.update(
-            urls => {
-
-              const updated =
-                { ...urls };
-
-              delete updated[id];
-
-              return updated;
-            }
-          );
-        },
-
-        error: (error) => {
-
-          console.error(
-            'Failed to delete screenshot:',
-            error
-          );
-        }
-      });
+  openScreenshot(screenshotId: number): void {
+    this.tradesService.getTradeEvaluationScreenshot(this.trade.ibExecID, screenshotId).subscribe({
+      next: (blob: Blob) => {
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank', 'noopener,noreferrer');
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+        }, 60_000);
+      },
+      error: (error) => {
+        logger.error('Failed to load screenshot', error);
+      },
+    });
   }
-
-
-  // =========================================
-  // SAVE
-  // =========================================
 
   save(): void {
-
-    if (this.saving()) {
+    if (!this.trade?.id) {
       return;
     }
-
-
-    const positivePoints =
-      this.positivePoints()
-        .map(point => point.trim())
-        .filter(
-          point =>
-            point.length > 0
-        );
-
-
-    const negativePoints =
-      this.negativePoints()
-        .map(point => point.trim())
-        .filter(
-          point =>
-            point.length > 0
-        );
-
-
-    const request:
-      TradeEvaluationRequest = {
-
-      positivePoints,
-
-      negativePoints,
-
-      comment:
-        this.comment().trim()
-    };
-
-
     this.saving.set(true);
-
-
-    this.tradesService
-      .saveTradeEvaluation(
-        this.data.trade.ibExecID,
-        request
-      )
-      .subscribe({
-
-        next: (evaluation) => {
-
-          console.log(
-            'Evaluation saved:',
-            evaluation
-          );
-
-
-          const files =
-            this.screenshotsToUpload();
-
-
-          if (files.length === 0) {
-
-            this.saving.set(false);
-
-            this.dialogRef.close(true);
-
-            return;
-          }
-
-
-          const uploads =
-            files.map(
-              file =>
-                this.tradesService
-                  .uploadTradeEvaluationScreenshot(
-                    this.data.trade.ibExecID,
-                    file
-                  )
-            );
-
-
-          forkJoin(uploads)
-            .subscribe({
-
-              next: (
-                uploadedScreenshots
-              ) => {
-
-                console.log(
-                  'Screenshots uploaded:',
-                  uploadedScreenshots
-                );
-
-
-                this.screenshots.update(
-                  current => [
-                    ...current,
-                    ...uploadedScreenshots
-                  ]
-                );
-
-
-                this.screenshotsToUpload.set(
-                  []
-                );
-
-
-                this.screenshotPreviews.set(
-                  []
-                );
-
-
-                this.saving.set(false);
-
-                this.dialogRef.close(true);
-              },
-
-              error: (error) => {
-
-                console.error(
-                  'Screenshot upload failed:',
-                  error
-                );
-
-                this.saving.set(false);
-
-                this.dialogRef.close(true);
-              }
-            });
-        },
-
-        error: (error) => {
-
+    const request: TradeEvaluationRequest = {
+      playbookAdherence: this.playbookAdherence(),
+      entryQuality: this.entryQuality(),
+      exitQuality: this.exitQuality(),
+      riskManagementQuality: this.riskManagementQuality(),
+      executionQuality: this.executionQuality(),
+      mistakeType: this.mistakeType(),
+      positivePoints: this.positivePoints()
+        .map((point) => point.trim())
+        .filter(Boolean),
+      negativePoints: this.negativePoints()
+        .map((point) => point.trim())
+        .filter(Boolean),
+      comment: this.comment().trim(),
+    };
+    this.tradesService.saveTradeEvaluation(this.trade.ibExecID, request).subscribe({
+      next: (evaluation) => {
+        const files = this.screenshotsToUpload();
+        if (!files.length) {
           this.saving.set(false);
-
-          console.error(
-            'Failed to save evaluation:',
-            error
-          );
+          this.dialogRef.close(evaluation);
+          return;
         }
-      });
+        const uploads = files.map((file) =>
+          this.tradesService.uploadTradeEvaluationScreenshot(this.trade.ibExecID, file),
+        );
+        forkJoin(uploads).subscribe({
+          next: () => {
+            this.saving.set(false);
+            this.dialogRef.close(evaluation);
+          },
+          error: () => {
+            this.saving.set(false);
+          },
+        });
+      },
+      error: () => {
+        this.saving.set(false);
+      },
+    });
   }
-
-
-  // =========================================
-  // CANCEL
-  // =========================================
-
   cancel(): void {
-
-    this.dialogRef.close(false);
+    this.dialogRef.close();
   }
 }

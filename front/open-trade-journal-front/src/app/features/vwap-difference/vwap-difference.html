@@ -1,0 +1,30 @@
+<div class="vwap-container">
+  <form class="toolbar" [formGroup]="vwapForm">
+    <div class="field">
+      <label for="symbol">Symbol</label>
+      <input id="symbol" type="text" formControlName="symbol" placeholder="NVDA" />
+    </div>
+
+    <div class="field">
+      <label for="fromDate">From</label>
+      <input id="fromDate" type="date" formControlName="fromDate" />
+    </div>
+
+    <div class="field">
+      <label for="toDate">To</label>
+      <input id="toDate" type="date" formControlName="toDate" />
+    </div>
+
+    <button type="button" (click)="loadPeriod()" [disabled]="loading()">
+      {{ loading() ? 'Loading...' : 'Load period' }}
+    </button>
+  </form>
+
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <div class="chart-wrapper">
+    <div echarts [options]="chartOptions" class="echarts-canvas"></div>
+  </div>
+</div>

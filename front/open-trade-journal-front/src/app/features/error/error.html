@@ -6,31 +6,20 @@
     </div>
     <!-- Error content -->
     <div class="row col-12 justify-content-center error-content">
-
-      <h1 class="text-center col-12">
-        ERROR: Something went wrong
-      </h1>
-
+      <h1 class="text-center col-12 fs-4 negative">ERROR: Something went wrong</h1>
       <p class="col-12 text-secondary text-center">
-        We couldn't connect to the authentication service.
-      </p>
-      <p class="col-12 text-secondary text-center">
+        We couldn't connect to the authentication service.<br />
         Please try again in a few moments.
       </p>
     </div>
-
     <!-- Retry -->
-    <div class="row d-flex align-items-center justify-content-center my-4">
+    <div class="row d-flex align-items-center justify-content-center my-2">
       <button
-        type="button"
+        class="error-button w-auto rounded-2 px-4 small fw-bold py-2 negative"
         (click)="retry()"
-        class="col-md-3"
       >
         [ TRY AGAIN ]
       </button>
-
     </div>
-
   </div>
-
 </div>

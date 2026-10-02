@@ -1,0 +1,15 @@
+<div class="d-flex align-items-center gap-3">
+  <div class="header-icon">
+    @if (matIcon()) {
+      <mat-icon>{{ matIcon() }}</mat-icon>
+    } @else {
+      <i class="bi {{ icon() }} menu-icon"></i>
+    }
+  </div>
+  <div>
+    <h1 class="title">{{ title() }}</h1>
+    @if (subtitle()) {
+      <p class="subtitle mb-0">{{ subtitle() }}</p>
+    }
+  </div>
+</div>

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="keycloak-email-spi">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/keycloack/target/keycloak-email-spi.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

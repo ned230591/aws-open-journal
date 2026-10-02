@@ -1,0 +1,141 @@
+<div class="light-blue-bg p-4 rounded-2 m-4">
+  <div class="medium d-flex align-items-center justify-content-between mb-4 p-2">
+    <div>
+      <div class="text-info fw-bold">&gt; PLAYBOOK COMPARATOR</div>
+      <div class="grey small">Compare trading performance across playbooks.</div>
+    </div>
+    <button
+      type="button"
+      class="bg-transparent border-0"
+      title="Close comparator"
+      (click)="close()"
+    >
+      <i class="bi bi-x-lg text-danger fw-bold fs-6"></i>
+    </button>
+  </div>
+
+  @if (comparatorLoading()) {
+    <div class="loading">Loading playbook comparison...</div>
+  }
+  @if (!comparatorLoading() && comparatorError) {
+    <div class="loss-light-bg text-danger p-2">{{ comparatorError }}</div>
+  }
+  @if (!comparatorLoading() && !comparatorError && comparatorData().length > 0) {
+    <div class="p-2">
+      <div class="small grey mb-3">
+        SELECT PLAYBOOKS<br />
+        Select at least two playbooks to compare their performance.
+      </div>
+      <div class="row d-flex">
+        @for (playbook of comparatorData(); track playbook.playbookId) {
+          <button
+            type="button"
+            class="bg-transparent w-auto p-2 border-secondary m-2 rounded-2 comparator-playbook"
+            [class.selected]="isPlaybookSelected(playbook.playbookId)"
+            (click)="toggleSelection(playbook.playbookId)"
+          >
+            <span class="comparator-checkbox">
+              @if (isPlaybookSelected(playbook.playbookId)) {
+                <i class="bi bi-check"></i>
+              }
+            </span>
+            <span>{{ playbook.playbookName }}</span>
+            <span [class.positive]="playbook.netPnl > 0" [class.negative]="playbook.netPnl < 0">
+              {{ playbook.netPnl | number: '1.2-2' }}
+            </span>
+          </button>
+        }
+      </div>
+    </div>
+    @if (selectedComparatorPlaybooks.length >= 2) {
+      <div class="row p-3 overflow-x-auto table-scroll">
+        <table class="p-2">
+          <thead>
+            <tr class="text-info small">
+              <th>METRIC</th>
+              @for (playbook of selectedComparatorPlaybooks; track playbook.playbookId) {
+                <th>{{ playbook.playbookName }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody class="grey small">
+            <tr>
+              <td>TRADES</td>
+              @for (playbook of selectedComparatorPlaybooks; track playbook.playbookId) {
+                <td>{{ playbook.trades }}</td>
+              }
+            </tr>
+            <tr>
+              <td>WINS</td>
+              @for (playbook of selectedComparatorPlaybooks; track playbook.playbookId) {
+                <td class="positive">{{ playbook.wins }}</td>
+              }
+            </tr>
+            <tr>
+              <td>LOSSES</td>
+              @for (playbook of selectedComparatorPlaybooks; track playbook.playbookId) {
+                <td class="negative">{{ playbook.losses }}</td>
+              }
+            </tr>
+            <tr>
+              <td>WIN RATE</td>
+              @for (playbook of selectedComparatorPlaybooks; track playbook.playbookId) {
+                <td>{{ playbook.winRate | number: '1.2-2' }}%</td>
+              }
+            </tr>
+            <tr>
+              <td>NET P&L</td>
+              @for (playbook of selectedComparatorPlaybooks; track playbook.playbookId) {
+                <td [class.positive]="playbook.netPnl > 0" [class.negative]="playbook.netPnl < 0">
+                  {{ playbook.netPnl | number: '1.2-2' }}
+                </td>
+              }
+            </tr>
+            <tr>
+              <td>AVERAGE WIN</td>
+              @for (playbook of selectedComparatorPlaybooks; track playbook.playbookId) {
+                <td class="positive">{{ playbook.averageWin | number: '1.2-2' }}</td>
+              }
+            </tr>
+            <tr>
+              <td>AVERAGE LOSS</td>
+              @for (playbook of selectedComparatorPlaybooks; track playbook.playbookId) {
+                <td class="negative">{{ playbook.averageLoss | number: '1.2-2' }}</td>
+              }
+            </tr>
+            <tr>
+              <td>EXPECTANCY</td>
+              @for (playbook of selectedComparatorPlaybooks; track playbook.playbookId) {
+                <td
+                  [class.positive]="playbook.expectancy > 0"
+                  [class.negative]="playbook.expectancy < 0"
+                >
+                  {{ playbook.expectancy | number: '1.2-2' }}
+                </td>
+              }
+            </tr>
+            <tr>
+              <td>PROFIT FACTOR</td>
+              @for (playbook of selectedComparatorPlaybooks; track playbook.playbookId) {
+                <td>{{ playbook.profitFactor | number: '1.2-2' }}</td>
+              }
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="text-danger small p-2">
+        Select at least
+        <strong>2 playbooks</strong>
+        to compare them.
+      </div>
+    }
+  } @else {
+    <div class="p-2">
+      <div class="grey small">
+        <span class="text-secondary fw-bold">[EMPTY]</span>NO PERFORMANCE DATA
+      </div>
+      <div class="grey small">No playbook performance data is currently available.</div>
+    </div>
+  }
+</div>

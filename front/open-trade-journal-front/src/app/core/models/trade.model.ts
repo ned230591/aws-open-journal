@@ -1,12 +1,27 @@
+import { PlaybookSummaryDto } from '../../features/playbooks/playbook-component/models/playbook.model';
 export interface Trade {
   id: number;
-  tradeDate: string;
+  userId: string;
+  currencyPrimary: string;
+  tradeId: string;
   symbol: string;
-  buySell: string;
-  tradePrice: number | null;
-  quantity: number | null;
+  tradeDate?: string;
+  transactionType: string;
+  exchange: string;
+  ibCommissionCurrency?: string;
+  quantity: number;
+  tradePrice: number;
+  tradeMoney: number;
+  taxes: number;
+  ibCommission: number;
+  netCash: number;
+  closePrice: number;
   fifoPnlRealized: number;
-  ibExecID:string;
+  buySell: string;
+  ibOrderId: string;
   orderTime: string;
-  evaluation:any  | null;
+  orderType: string;
+  traderId: string;
+  ibExecID: string;
+  playbooks: PlaybookSummaryDto[];
 }
