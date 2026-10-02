@@ -71,7 +71,9 @@ services:
       dockerfile: journal-service/Dockerfile
     environment:
       DATABENTO_KEY: /run/secrets/DATABENTO_KEY
-    
+      DB_USERNAME: tradejournal
+      DB_PASSWORD: tradejournal
+
     image: trade-journal-service:latest
     container_name: trade-journal-service
     restart: unless-stopped
