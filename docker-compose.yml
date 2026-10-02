@@ -452,6 +452,7 @@ networks:
 
   open-trade-journal:
 secrets:
-  DATABENTO_KEY: db-LbffE8tji5pFHwujjPwbWPJBSwE8m
+  DATABENTO_KEY:
+    file: ./databento_key.txt
   brevo_api_key:
     file: ./brevo_api_key.txt
