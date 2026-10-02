@@ -65,21 +65,21 @@
           <span class="hint-icon" [matTooltip]="highFirstExplanation">?</span>
           HIGH FORMED FIRST
         </small>
-        <div class="fs-6 fw-bold">{{ highFirstPct() | number: '1.0-1' }}%</div>
+        <div class="fs-6 fw-bold grey">{{ highFirstPct() | number: '1.0-1' }}%</div>
       </div>
       <div class="w-auto">
         <small class="fw-bold grey d-flex align-items-center gap-1">
           <span class="hint-icon" [matTooltip]="avgRangeExplanation">?</span>
           AVG RANGE
         </small>
-        <div class="fs-6 fw-bold">{{ avgRangePct() | number: '1.2-2' }}%</div>
+        <div class="fs-6 fw-bold grey">{{ avgRangePct() | number: '1.2-2' }}%</div>
       </div>
       <div class="w-auto">
         <small class="fw-bold grey d-flex align-items-center gap-1">
           <span class="hint-icon" [matTooltip]="avgCloseLocationExplanation">?</span>
           AVG CLOSE LOCATION
         </small>
-        <div class="fs-6 fw-bold">{{ avgCloseLocation() | number: '1.2-2' }}</div>
+        <div class="fs-6 fw-bold grey">{{ avgCloseLocation() | number: '1.2-2' }}</div>
         <div class="close-location-bar mt-1">
           <div class="close-location-marker" [style.left.%]="avgCloseLocation() * 100"></div>
         </div>
@@ -89,7 +89,7 @@
           <span class="hint-icon" [matTooltip]="avgCandleShapeExplanation">?</span>
           AVG CANDLE SHAPE
         </small>
-        <div class="fs-6 fw-bold">body {{ avgCandleShape().bodyPct | number: '1.0-0' }}%</div>
+        <div class="fs-6 fw-bold grey">body {{ avgCandleShape().bodyPct | number: '1.0-0' }}%</div>
         <div class="small grey">
           wicks {{ avgCandleShape().upperWickPct | number: '1.0-0' }}% /
           {{ avgCandleShape().lowerWickPct | number: '1.0-0' }}%
@@ -179,13 +179,13 @@
 
     <!-- CHOCH RELIABILITY -->
     @if (shiftReliabilityOverall().n > 0) {
-      <div class="mb-4">
+      <div class="mb-4  row">
         <div class="text-info small fw-bold mb-2 d-flex align-items-center gap-1">
           <span class="hint-icon" [matTooltip]="chochSectionExplanation">?</span>
           CHOCH RELIABILITY
         </div>
         <div class="dark-green-bg rounded-2 p-3">
-          <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+          <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2 ">
             <div class="d-flex align-items-center gap-1">
               <span class="hint-icon" [matTooltip]="shiftOverallExplanation()">?</span>
               <div>
@@ -207,8 +207,8 @@
             }
           </div>
 
-          <div class="row">
-            <div class="col-12 col-lg-4 mb-3">
+          <div class="row ">
+            <div class="col-12 col-lg-6   mb-3 ">
               <div class="grey small fw-bold mb-2 d-flex align-items-center gap-1">
                 <span class="hint-icon" [matTooltip]="chochTimeOfDayExplanation">?</span>
                 BY TIME OF DAY
@@ -227,7 +227,7 @@
               }
             </div>
 
-            <div class="col-12 col-lg-4 mb-3">
+            <div class="col-12 col-lg-6  mb-3">
               <div class="grey small fw-bold mb-2 d-flex align-items-center gap-1">
                 <span class="hint-icon" [matTooltip]="chochRangeRegimeExplanation">?</span>
                 BY DAY RANGE REGIME
@@ -248,7 +248,7 @@
               }
             </div>
 
-            <div class="col-12 col-lg-4 mb-3">
+            <div class="col-12 col-lg-6 mb-3">
               <div class="grey small fw-bold mb-2 d-flex align-items-center gap-1">
                 <span class="hint-icon" [matTooltip]="chochStreakExplanation">?</span>
                 BY PRIOR TREND STREAK
@@ -282,7 +282,7 @@
           <div class="d-flex align-items-center gap-1 mb-3">
             <span class="hint-icon" [matTooltip]="legOverallExplanation()">?</span>
             <span class="grey small">Overall avg move</span>
-            <span class="fs-6 fw-bold ms-1">
+            <span class="fs-6 fw-bold ms-1 grey">
               {{ legOverall().avgAmplitudePct | number: '1.2-2' }}% /
               {{ legOverall().avgDurationMinutes | number: '1.0-0' }}min
             </span>

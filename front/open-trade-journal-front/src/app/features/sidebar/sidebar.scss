@@ -160,3 +160,21 @@
     margin-right: 10px !important;
   }
 }
+
+.div-items {
+  overflow-y:auto;
+  max-height:60vh ;
+  }
+.div-items::-webkit-scrollbar {
+  width: 4px;
+}
+
+.div-items::-webkit-scrollbar-track {
+  background: #d0d0d0;
+   border-radius: 10px;
+}
+
+.div-items::-webkit-scrollbar-thumb {
+  background: green;
+  border-radius: 10px;
+}
